@@ -11,6 +11,8 @@ To provide feedback or report bugs, [kindly open a GitHub issue](https://github.
 For code contributions, explore our "Contributing" guidelines and become part of our open-source community. 
 
 Thank you to all the dedicated individuals who contribute; your passion drives our success. Together, we shape the future of web3 industry.
+
+
 <a href="https://github.com/kitzen-io/wallet-core-essentials/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=kitzen-io/wallet-core-essentials&max=400&columns=20" />
   <img src="https://us-central1-tooljet-hub.cloudfunctions.net/github" width="0" height="0" />
