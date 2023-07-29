@@ -1,7 +1,6 @@
 export interface BIP39API {
   mnemonicToSeed(mnemonic: string): Buffer;
-
-  generateMnemonic(): string;
+  generateMnemonic(): Promise<string>;
 }
 
 export interface Address {

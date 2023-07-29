@@ -39,6 +39,30 @@ Install the package
 yarn add @kitzen/wallet-core-essentials
 ```
 
+### Android installation
+
+Create `initialize.ts` file and import it somewhere on the main entry, e.g. onm the react-native `index.js`
+```typescript
+import {Buffer} from "buffer";
+import {CryptoFactory} from "@kitzen/wallet-core-essentials";
+import bip39 from "@kitzen/react-native-bip39";
+
+global.Buffer = Buffer;
+CryptoFactory.setBip39(bip39);
+```
+
+### Web installation
+
+Initialize factory, before using it:
+```typescript
+import {Buffer} from "buffer";
+import {CryptoFactory} from "@kitzen/wallet-core-essentials";
+import bip39 from "bip39";
+
+global.Buffer = Buffer;
+CryptoFactory.setBip39(bip39);
+```
+
 # Contributing
 We deeply appreciate the valuable contributions made by our community. 
 To provide feedback or report bugs, [kindly open a GitHub issue](https://github.com/kitzen-io/wallet-core-essentials/issues/new).
