@@ -4,8 +4,8 @@ import {ECPairAPI} from "ecpair/src/ecpair";
 
 import {ecc} from "./ecc";
 import {Btc} from "./btc";
-import {BIP39API} from "interfaces";
-import {Trx} from "trx";
+import {BIP39API} from "./interfaces";
+import {Trx} from "./trx";
 
 
 export class CryptoFactory {
