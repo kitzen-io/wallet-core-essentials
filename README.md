@@ -6,6 +6,38 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/kitzen-io/wallet-core-essentials/badge.svg)](https://snyk.io/test/github/kitzen-io/wallet-core-essentials)
 
 Kitzen Wallet Core Essentials is an open-source library, provides reusable components and core cryptographic wallet functionality for a different blockchains. It is a core part of Kitzen Wallet.
+# Installation
+
+Modify package.json with 
+```json
+{  
+  "scripts": {
+    "postinstall": "patch-package"
+  }
+}
+```
+Execute the following commands
+```bash
+mkdir -p ./patches
+cat > patches/cipher-base+1.0.4.patch <<- EOM
+diff --git a/node_modules/cipher-base/index.js b/node_modules/cipher-base/index.js
+index 6728005..fd5ada7 100644
+--- a/node_modules/cipher-base/index.js
++++ b/node_modules/cipher-base/index.js
+@@ -1,5 +1,5 @@
+ var Buffer = require('safe-buffer').Buffer
+-var Transform = require('stream').Transform
++var Transform = require('stream-browserify').Transform
+ var StringDecoder = require('string_decoder').StringDecoder
+ var inherits = require('inherits')
+
+EOM
+```
+Install the package
+
+```
+yarn add @kitzen/wallet-core-essentials
+```
 
 # Contributing
 We deeply appreciate the valuable contributions made by our community. 
