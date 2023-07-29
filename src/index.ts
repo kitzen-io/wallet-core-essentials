@@ -1,3 +1,9 @@
-import {ecc} from "@/ecc";
+import {ecc} from "./ecc";
+import {CryptoFactory} from './crypto-factory'
 
-export {ecc}
+export * from "./interfaces";
+export * from "./backend-api";
+export {
+  ecc,
+  CryptoFactory
+}

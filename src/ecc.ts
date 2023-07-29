@@ -1,4 +1,4 @@
-import {utils} from '@/secp';
+import {utils} from './secp';
 import {
   Point,
   getPublicKey,
