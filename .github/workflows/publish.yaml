@@ -1,0 +1,24 @@
+name: build-publish
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - uses: EndBug/version-check@v2
+        id: version-check
+        with:
+          file-url: https://unpkg.com/@kitzen/wallet-core-essentials@latest/package.json
+          static-checking: localIsNew
+      - run: npm publish
+#        if: steps.version-check.outputs.changed == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
