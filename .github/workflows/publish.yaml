@@ -13,12 +13,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install --frozen-lockfile
       - run: yarn build
-#      - uses: EndBug/version-check@v2
-#        id: version-check
-#        with:
-#          file-url: https://unpkg.com/@kitzen/wallet-core-essentials@latest/package.json
-#          static-checking: localIsNew
+      - uses: EndBug/version-check@v2
+        id: version-check
+        with:
+          file-url: https://unpkg.com/@kitzen/wallet-core-essentials@latest/package.json
+          static-checking: localIsNew
       - run: npm publish
-#        if: steps.version-check.outputs.changed == 'true'
+        if: steps.version-check.outputs.changed == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
