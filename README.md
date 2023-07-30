@@ -39,13 +39,13 @@ Install the package
 yarn add @kitzen/wallet-core-essentials
 ```
 
-### Android installation
+### React-native installation
 
 Create `initialize.ts` file and import it somewhere on the main entry, e.g. onm the react-native `index.js`
 ```typescript
 import {Buffer} from "buffer";
 import {CryptoFactory} from "@kitzen/wallet-core-essentials";
-import bip39 from "@kitzen/react-native-bip39";
+import * as bip39 from "@kitzen/react-native-bip39";
 
 global.Buffer = Buffer;
 CryptoFactory.setBip39(bip39);
