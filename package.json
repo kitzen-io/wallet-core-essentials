@@ -33,6 +33,6 @@
     "patch-package": "^7.0.2",
     "stream-browserify": "^3.0.0",
     "events": "3.3.0",
-    "tronweb": "4.3.0"
+    "tronweb": "4.4.0"
   }
 }
