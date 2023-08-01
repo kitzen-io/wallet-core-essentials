@@ -1,5 +1,5 @@
 # wallet-core-essentials
-[![npm version](https://img.shields.io/npm/v/@graphql-portal/gateway?color=green)](https://www.npmjs.com/package/@kitzen/wallet-core-essentials)
+[![npm version](https://img.shields.io/npm/v/@kitzen/wallet-core-essentials?color=green)](https://www.npmjs.com/package/@kitzen/wallet-core-essentials)
 [![from kitzen with Love](https://img.shields.io/badge/from%20kitzen%20with-%F0%9F%A4%8D-red)](https://kitzen.io/)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkitzen-io%2Fwallet-core-essentials.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkitzen-io%2Fwallet-core-essentials?ref=badge_shield)
 ![test](https://github.com/kitzen-io/wallet-core-essentials/workflows/build-publish/badge.svg)
