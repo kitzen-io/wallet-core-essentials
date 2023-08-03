@@ -27,7 +27,7 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): Pos
     path: adr.derivePath,
   })))
 
-  let newVar: PostUserAddressRequest = {
+  const result: PostUserAddressRequest = {
     addresses: allAddresses.map(a => ({
       ...a,
       signature: btc.signMessage(message, a.path, data.privateKeyBase58),
@@ -35,18 +35,18 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): Pos
     }))
   };
 
-  let addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyHex);
+  // let addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyHex);
+  //
+  // result.addresses.push(...addressFromPrivateKey.map((adr) => ({
+  //   address: adr.address,
+  //   network: AddressNetworkDto.TRX,
+  //   type: AddressTypeDto.RECEIVE,
+  //   path: adr.derivePath,
+  //   message,
+  //   signature: trx.signMessage(message, data.privateKeyBase58)
+  // })))
 
-  newVar.addresses.push(...addressFromPrivateKey.map((adr) => ({
-    address: adr.address,
-    network: AddressNetworkDto.TRX,
-    type: AddressTypeDto.RECEIVE,
-    path: adr.derivePath,
-    message,
-    signature: trx.signMessage(message, data.privateKeyBase58)
-  })))
-
-  return newVar;
+  return result;
 }
 
 export function getVerifyMessageDto(data: WalletPrivateData, message: string): PostUserAuthVerifyRequest {
