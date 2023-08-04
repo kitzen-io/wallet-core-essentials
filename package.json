@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kitzen-io/wallet-core-essentials"
+    "url": "git+https://github.com/kitzen-io/wallet-core-essentials.git"
   },
   "publishConfig": {
     "access": "public",
