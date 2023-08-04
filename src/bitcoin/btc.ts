@@ -3,7 +3,7 @@ import { BIP32API, BIP32Interface } from 'bip32';
 import { Network, networks, payments } from 'bitcoinjs-lib';
 import * as bitcoinMessage from 'bitcoinjs-message';
 import { ECPairAPI } from 'ecpair';
-import { BIP39API, WalletPrivateData } from './interfaces';
+import { BIP39API, WalletPrivateData } from '../interface/interfaces';
 
 export class Btc {
 

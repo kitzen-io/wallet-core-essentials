@@ -1,5 +1,5 @@
-import { WalletPrivateData } from './interfaces';
-import { CryptoFactory } from './crypto-factory';
+import { WalletPrivateData } from '../interface/interfaces';
+import { CryptoFactory } from '../bitcoin/crypto-factory';
 import {
   AddressTypeEnum,
   BlockchainNetworkEnum,

@@ -4,8 +4,8 @@ import { ECPairAPI } from 'ecpair/src/ecpair';
 
 import { ecc } from './ecc';
 import { Btc } from './btc';
-import { BIP39API } from './interfaces';
-import { Trx } from './trx';
+import { BIP39API } from '../interface/interfaces';
+import { Tron } from '../tron/trx';
 
 
 export class CryptoFactory {
@@ -17,7 +17,7 @@ export class CryptoFactory {
 
   private static bip39?: BIP39API;
 
-  private static tronWeb?: Trx;
+  private static tronWeb?: Tron;
 
   public static getEcPair(): ECPairAPI {
     if (!CryptoFactory.ecPair) {
@@ -26,9 +26,9 @@ export class CryptoFactory {
     return CryptoFactory.ecPair;
   }
 
-  public static getTrx(): Trx {
+  public static getTrx(): Tron {
     if (!CryptoFactory.tronWeb) {
-      CryptoFactory.tronWeb = new Trx();
+      CryptoFactory.tronWeb = new Tron();
     }
     return CryptoFactory.tronWeb;
   }

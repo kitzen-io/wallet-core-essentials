@@ -1,4 +1,4 @@
-import { Trx } from "../src/trx";
+import { Trx } from "../src/tron/trx";
 
 describe("trx", () => {
   test('Trx', () => {
