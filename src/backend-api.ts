@@ -1,46 +1,46 @@
-import {WalletPrivateData} from "./interfaces";
-import {CryptoFactory} from "./crypto-factory";
+import { WalletPrivateData } from './interfaces';
+import { CryptoFactory } from './crypto-factory';
 import {
+  AddressTypeEnum,
+  BlockchainNetworkEnum,
   IAddressDto,
-  PostUserAddressRequest,
-  PostUserAuthVerifyRequest,
-  AddressNetworkDto,
-  AddressTypeDto
-} from "@kitzen/api-dto";
+  IUserAddressRequest,
+  IUserAuthVerifyMessageRequest,
+} from '@kitzen/data-transfer-objects';
 
+export function getPostAddressDto(data: WalletPrivateData, message: string): IUserAddressRequest {
+  const trx = CryptoFactory.getTrx();
+  const btc = CryptoFactory.getBtc();
 
-export function getPostAddressDto(data: WalletPrivateData, message: string): PostUserAddressRequest {
-  let trx = CryptoFactory.getTrx();
-  let btc = CryptoFactory.getBtc();
-  let allAddresses: Omit<IAddressDto, 'message' | 'signature'> [] = [];
+  const allAddresses: Omit<IAddressDto, 'message' | 'signature'> [] = [];
   allAddresses.push(...data.addressReceive.map((adr) => ({
     address: adr.address,
-    network: AddressNetworkDto.BTC,
-    type: AddressTypeDto.RECEIVE,
+    network: BlockchainNetworkEnum.BTC,
+    type: AddressTypeEnum.RECEIVE,
     path: adr.derivePath,
-  })))
+  })));
 
   allAddresses.push(...data.addressReceive.map((adr) => ({
     address: adr.address,
-    network: AddressNetworkDto.BTC,
-    type: AddressTypeDto.CHANGE,
+    network: BlockchainNetworkEnum.BTC,
+    type: AddressTypeEnum.CHANGE,
     path: adr.derivePath,
-  })))
+  })));
 
-  const result: PostUserAddressRequest = {
+  const result: IUserAddressRequest = {
     addresses: allAddresses.map(a => ({
       ...a,
       signature: btc.signMessage(message, a.path, data.privateKeyBase58),
       message,
-    }))
+    })),
   };
 
   // let addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyHex);
   //
   // result.addresses.push(...addressFromPrivateKey.map((adr) => ({
   //   address: adr.address,
-  //   network: AddressNetworkDto.TRX,
-  //   type: AddressTypeDto.RECEIVE,
+  //   network: BlockchainNetworkEnum.TRX,
+  //   type: AddressTypeEnum.RECEIVE,
   //   path: adr.derivePath,
   //   message,
   //   signature: trx.signMessage(message, data.privateKeyBase58)
@@ -49,7 +49,7 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): Pos
   return result;
 }
 
-export function getVerifyMessageDto(data: WalletPrivateData, message: string): PostUserAuthVerifyRequest {
+export function getVerifyMessageDto(data: WalletPrivateData, message: string): IUserAuthVerifyMessageRequest {
   const masterAddress = data.addressReceive[0];
   return {
     message,

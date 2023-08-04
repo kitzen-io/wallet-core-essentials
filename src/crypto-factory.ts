@@ -1,18 +1,22 @@
-import {ECPairFactory} from "ecpair";
-import BIP32Factory, {BIP32API} from "bip32";
-import {ECPairAPI} from "ecpair/src/ecpair";
+import { ECPairFactory } from 'ecpair';
+import BIP32Factory, { BIP32API } from 'bip32';
+import { ECPairAPI } from 'ecpair/src/ecpair';
 
-import {ecc} from "./ecc";
-import {Btc} from "./btc";
-import {BIP39API} from "./interfaces";
-import {Trx} from "./trx";
+import { ecc } from './ecc';
+import { Btc } from './btc';
+import { BIP39API } from './interfaces';
+import { Trx } from './trx';
 
 
 export class CryptoFactory {
   private static ecPair?: ECPairAPI;
+
   private static bip32?: BIP32API;
+
   private static btc?: Btc;
+
   private static bip39?: BIP39API;
+
   private static tronWeb?: Trx;
 
   public static getEcPair(): ECPairAPI {
@@ -22,7 +26,7 @@ export class CryptoFactory {
     return CryptoFactory.ecPair;
   }
 
-   public static getTrx(): Trx {
+  public static getTrx(): Trx {
     if (!CryptoFactory.tronWeb) {
       CryptoFactory.tronWeb = new Trx();
     }
@@ -42,7 +46,7 @@ export class CryptoFactory {
 
   public static getBip39(): BIP39API {
     if (!CryptoFactory.bip39) {
-      throw Error("Factory was not initialized");
+      throw Error('Factory was not initialized');
     }
     return CryptoFactory.bip39;
   }

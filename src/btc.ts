@@ -1,20 +1,13 @@
 // import { IBip32Derivation } from '@prominence-group/common-lib/web';
-import {
-  BIP32API,
-  BIP32Interface
-} from 'bip32';
-import {
-  Network,
-  networks,
-  payments
-} from 'bitcoinjs-lib';
+import { BIP32API, BIP32Interface } from 'bip32';
+import { Network, networks, payments } from 'bitcoinjs-lib';
 import * as bitcoinMessage from 'bitcoinjs-message';
-import {ECPairAPI} from 'ecpair';
-import {BIP39API, WalletPrivateData} from "./interfaces";
+import { ECPairAPI } from 'ecpair';
+import { BIP39API, WalletPrivateData } from './interfaces';
 
 export class Btc {
 
-  constructor(
+  public constructor(
     private ecPair: ECPairAPI,
     private bip32: BIP32API,
     private bip39: BIP39API,
@@ -57,8 +50,8 @@ export class Btc {
       privateKeyBase58,
       addressReceive,
       addressChange,
-      privateKeyHex
-    }
+      privateKeyHex,
+    };
   }
 
   //
@@ -101,7 +94,7 @@ export class Btc {
   public signMessage(message: string, derivePath: string, privateKeyBase58: string): string {
     const wif = this.bip32.fromBase58(privateKeyBase58, networks.bitcoin).derivePath(derivePath).toWIF();
     const keyPair = this.ecPair.fromWIF(wif);
-    const signature = bitcoinMessage.sign(message, keyPair.privateKey!, keyPair.compressed, {segwitType: 'p2wpkh'});
+    const signature = bitcoinMessage.sign(message, keyPair.privateKey!, keyPair.compressed, { segwitType: 'p2wpkh' });
     return signature.toString('base64');
   }
 
@@ -111,7 +104,7 @@ export class Btc {
   // }
   //
   private getBTCAddress(wallet: BIP32Interface, network?: Network): string {
-    return payments.p2wpkh({pubkey: wallet.publicKey, network}).address!;
+    return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
   }
 
   //

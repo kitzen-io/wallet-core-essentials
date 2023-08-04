@@ -15,3 +15,4 @@ export interface WalletPrivateData {
   addressReceive: Address[];
   addressChange: Address[];
 }
+
