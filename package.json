@@ -7,11 +7,11 @@
   "homepage": "https://github.com/kitzen-io/wallet-core-essentials#readme",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf lib && tsc",
+    "build": "rm -rf lib && tsc && cp ./package.json lib && cp ./.releaserc.json lib && cp ./tsconfig.json lib",
     "test": "jest"
   },
   "files": [
-    "lib"
+    "**/*"
   ],
   "engines": {
     "node": ">=18 < 19"

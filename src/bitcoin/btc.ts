@@ -20,8 +20,8 @@ export class Btc {
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
-    const addressReceive = [];
-    const addressChange = [];
+    const addressReceive: any = [];
+    const addressChange: any = [];
 
     let bip32Interface = wallet.derivePath('m/44\'/195\'/0\'/0/0');
     const privateKeyHex = bip32Interface.privateKey!.toString('hex');
