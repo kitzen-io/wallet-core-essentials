@@ -1,5 +1,4 @@
-// @ts-ignore
-import TronWeb from 'tronweb/dist/TronWeb';
+import TronWeb from 'tronweb';
 import { Address } from '../interface/interfaces';
 
 export class Tron {
