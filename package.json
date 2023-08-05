@@ -14,7 +14,7 @@
     "**/*"
   ],
   "engines": {
-    "node": ">=18 < 19"
+    "node": ">=16"
   },
   "repository": {
     "type": "git",
