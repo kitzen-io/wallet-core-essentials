@@ -1,7 +1,12 @@
 name: build-publish
+
 on:
   push:
     branches: [main]
+
+permissions:
+  contents: read
+  
 jobs:
   build-publish:
     runs-on: ubuntu-latest
