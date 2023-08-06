@@ -1,26 +1,26 @@
 import BigNumber from 'bignumber.js';
-import { CoinsEnum, ConversionEnum } from '@kitzen/data-transfer-objects';
+
+const FIAT_DECIMALS = 10000;
 
 class CalculationTool {
   /**
    * For example toPenny(1, 'btc') - converts 1 btc to satoshi, returns 100000000
    * @param coinAmount - numeric amount
-   * @param coin - specify coin
+   * @param decimals - coin decimals
    */
-  public static toPenny(coinAmount: number, coin: CoinsEnum): bigint {
+  public static toPenny(coinAmount: number, decimals: number): bigint {
     CalculationTool.setup();
-    const decimal = ConversionEnum[coin];
-    return BigInt(new BigNumber(coinAmount.toString()).times(new BigNumber(decimal)).dp(0).toFixed());
+    return BigInt(new BigNumber(coinAmount.toString()).times(new BigNumber(Math.pow(10, decimals))).dp(0).toFixed());
   }
 
   /**
    * For example toCoin(100000000, 'btc') - converts 1kk satoshi to btc, returns 1
    * @param coins - amount of coins
-   * @param coin - specify coin
+   * @param decimals - coin decimals
    */
-  public static toCoin(coins: bigint, coin: CoinsEnum): number {
+  public static toCoin(coins: bigint, decimals: number): number {
     CalculationTool.setup();
-    const decimal = ConversionEnum[coin];
+    const decimal = Math.pow(10, decimals);
     return +new BigNumber(coins.toString()).div(new BigNumber(decimal));
   }
 
@@ -60,14 +60,13 @@ class CalculationTool {
    * Convert crypto coins to fiat by currency rate
    * @param amountInCoins
    * @param rate
-   * @param fromCoinSymbol
+   * @param decimals
    */
-  public static toFiat(amountInCoins: string | number, rate: number, fromCoinSymbol: ConversionEnum): string {
+  public static toFiat(amountInCoins: string | number, rate: number, decimals: number): string {
     CalculationTool.setup();
-    const conversionFrom = fromCoinSymbol as unknown as string;
     const amount = new BigNumber(amountInCoins.toString())
       .times(rate)
-      .div(new BigNumber(conversionFrom));
+      .div(new BigNumber(Math.pow(10, decimals)));
 
     return CalculationTool.toFixed(amount);
   }
@@ -76,14 +75,15 @@ class CalculationTool {
    * Convert fiat to crypto by currency rate
    * @param fiatCoins - penny coins. to convert 1 dollar to penny use method" `CalculationTool.toPenny(1, Coins.USD);`
    * @param pricePerCoin - rate, for example 44000 (44k usd per 1 btc)
-   * @param coinSymbol - btc for example
+   * @param coinDecimals - coin decimals
    * toCrypto(
    */
-  public static toCrypto = (fiatCoins: string, pricePerCoin: number, coinSymbol: ConversionEnum): string => {
+  public static toCrypto = (fiatCoins: string, pricePerCoin: number, coinDecimals: number): string => {
     CalculationTool.setup();
-    const priceInCoins = new BigNumber(pricePerCoin).times(new BigNumber(ConversionEnum.usd));
+
+    const priceInCoins = new BigNumber(pricePerCoin).times(new BigNumber(Math.pow(10, FIAT_DECIMALS)));
     return new BigNumber(fiatCoins)
-      .times(new BigNumber(coinSymbol))
+      .times(Math.pow(10, coinDecimals))
       .div(priceInCoins)
       .dp(0)
       .toFixed();
