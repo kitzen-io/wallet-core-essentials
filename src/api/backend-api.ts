@@ -9,7 +9,7 @@ import {
 } from '@kitzen/data-transfer-objects';
 
 export function getPostAddressDto(data: WalletPrivateData, message: string): IUserAddressRequest {
-  const trx = CryptoFactory.getTrx();
+  // const trx = CryptoFactory.getTrx();
   const btc = CryptoFactory.getBtc();
 
   const allAddresses: Omit<IAddressDto, 'message' | 'signature'> [] = [];
