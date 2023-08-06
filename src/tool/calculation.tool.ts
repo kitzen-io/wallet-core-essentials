@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
 
+const FIAT_DECIMALS = 10000;
+
 class CalculationTool {
   /**
    * For example toPenny(1, 'btc') - converts 1 btc to satoshi, returns 100000000
@@ -73,14 +75,13 @@ class CalculationTool {
    * Convert fiat to crypto by currency rate
    * @param fiatCoins - penny coins. to convert 1 dollar to penny use method" `CalculationTool.toPenny(1, Coins.USD);`
    * @param pricePerCoin - rate, for example 44000 (44k usd per 1 btc)
-   * @param fiatDecimals - fiat decimals
    * @param coinDecimals - coin decimals
    * toCrypto(
    */
-  public static toCrypto = (fiatCoins: string, pricePerCoin: number, fiatDecimals: number, coinDecimals: number): string => {
+  public static toCrypto = (fiatCoins: string, pricePerCoin: number, coinDecimals: number): string => {
     CalculationTool.setup();
 
-    const priceInCoins = new BigNumber(pricePerCoin).times(new BigNumber(Math.pow(10, fiatDecimals)));
+    const priceInCoins = new BigNumber(pricePerCoin).times(new BigNumber(Math.pow(10, FIAT_DECIMALS)));
     return new BigNumber(fiatCoins)
       .times(Math.pow(10, coinDecimals))
       .div(priceInCoins)
