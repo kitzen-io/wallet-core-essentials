@@ -20,7 +20,7 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): IUs
     path: adr.derivePath,
   })));
 
-  allAddresses.push(...data.addressReceive.map((adr) => ({
+  allAddresses.push(...data.addressChange.map((adr) => ({
     address: adr.address,
     network: BlockchainNetworkEnum.BTC,
     type: AddressTypeEnum.CHANGE,

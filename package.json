@@ -32,7 +32,7 @@
     }
   },
   "dependencies": {
-    "@kitzen/data-transfer-objects": "^1.0.14",
+    "@kitzen/data-transfer-objects": "^1.0.21",
     "@noble/secp256k1": "1.6.3",
     "bignumber.js": "^9.1.1",
     "bip32": "3.0.1",
