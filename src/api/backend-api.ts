@@ -9,7 +9,7 @@ import {
 } from '@kitzen/data-transfer-objects';
 
 export function getPostAddressDto(data: WalletPrivateData, message: string): IUserAddressRequest {
-  // const trx = CryptoFactory.getTrx();
+  const trx = CryptoFactory.getTrx();
   const btc = CryptoFactory.getBtc();
 
   const allAddresses: Omit<IAddressDto, 'message' | 'signature'> [] = [];
@@ -35,16 +35,16 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): IUs
     })),
   };
 
-  // let addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyHex);
-  //
-  // result.addresses.push(...addressFromPrivateKey.map((adr) => ({
-  //   address: adr.address,
-  //   network: BlockchainNetworkEnum.TRX,
-  //   type: AddressTypeEnum.RECEIVE,
-  //   path: adr.derivePath,
-  //   message,
-  //   signature: trx.signMessage(message, data.privateKeyBase58)
-  // })))
+  let addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyHex);
+
+  result.addresses.push(...addressFromPrivateKey.map((adr) => ({
+    address: adr.address,
+    network: BlockchainNetworkEnum.TRC10,
+    type: AddressTypeEnum.RECEIVE,
+    path: adr.derivePath,
+    message,
+    signature: trx.signMessage(message, data.privateKeyBase58)
+  })));
 
   return result;
 }
