@@ -43,7 +43,7 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): IUs
     type: AddressTypeEnum.RECEIVE,
     path: adr.derivePath,
     message,
-    signature: trx.signMessage(message, data.privateKeyBase58)
+    signature: trx.signMessage(message, data.privateKeyHex),
   })));
 
   return result;

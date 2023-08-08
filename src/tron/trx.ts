@@ -1,14 +1,15 @@
-import TronWeb from 'tronweb';
+import { signMessage } from '@kitzen/tronweb/src/utils/message';
+import { pkToAddress } from '@kitzen/tronweb/src/utils/crypto';
 import { Address } from '../interface/interfaces';
 
 export class Tron {
   public getAddressFromPrivateKey(privateKeyHex: string): Address[] {
-    let address = TronWeb.address.fromPrivateKey(privateKeyHex);
+    let address = pkToAddress(privateKeyHex);
     return [{ address, derivePath: "m/84'/0'/0'/0/0" }];
   }
 
-  public signMessage(message: string, privateKeyBase58: string): string {
-    return TronWeb.utils.message.signMessage(message, privateKeyBase58);
+  public signMessage(message: string, privateKeyHex: string): string {
+    return signMessage(message, privateKeyHex);
   }
 }
 
