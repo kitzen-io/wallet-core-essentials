@@ -12,9 +12,6 @@
   "engines": {
     "node": ">=16"
   },
-  "files": [
-    "lib"
-  ],
   "main": "lib/index.js",
   "repository": {
     "type": "git",
@@ -24,13 +21,20 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+
   "typesVersions": {
     "*": {
       ".": [
-        "./lib/index.d.ts"
+        "./index.d.ts"
       ]
     }
   },
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "**/*"
+  ],
   "dependencies": {
     "@kitzen/data-transfer-objects": "^1.0.21",
     "@noble/secp256k1": "1.6.3",
