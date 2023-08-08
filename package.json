@@ -49,19 +49,19 @@
     "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
+    "bip39": "3.0.4",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/gitlab": "^9.2.0",
     "@semantic-release/npm": "^9.0.1",
     "@types/create-hmac": "^1.1.0",
+    "@types/jest": "^26.0.0",
     "@typescript-eslint/eslint-plugin": "5.36.1",
     "@typescript-eslint/parser": "5.36.1",
     "eslint": "^8.14.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-import": "^2.22.0",
-    "semantic-release": "^19.0.2",
-    "typescript": "^5.1.6",
-    "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
-    "ts-jest": "^26.0.0"
+    "ts-jest": "^26.0.0",
+    "typescript": "^5.1.6"
   }
 }
