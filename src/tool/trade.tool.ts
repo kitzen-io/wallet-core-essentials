@@ -1,7 +1,7 @@
 import { CalculationTool } from './index';
 
-const FIAT_DECIMALS = 10000;
 class TradeTool {
+
   public static getTradeFee(escrowTransactionFeeRate: number, escrowTransactionMinSatoshiAmount: number, cryptoAmount: bigint): bigint {
     const fee: bigint = CalculationTool.bigIntMulNumber(cryptoAmount, escrowTransactionFeeRate);
 
@@ -25,7 +25,7 @@ class TradeTool {
   public static calculateMinOfferFiatAmount(escrowTransactionFeeRate: number, escrowTransactionMinAmount: number, pricePerCoin: number, cryptoDecimals: number): number {
     const minCoinEquivalent = escrowTransactionMinAmount * 3;
 
-    const fiatCoins = CalculationTool.toPenny(1, FIAT_DECIMALS);
+    const fiatCoins = CalculationTool.toPenny(1, CalculationTool.FIAT_DECIMALS);
     const cryptoAmountPerUnit = CalculationTool.toCrypto(fiatCoins.toString(), pricePerCoin, cryptoDecimals);
 
     return Math.round(minCoinEquivalent / Number(cryptoAmountPerUnit));
