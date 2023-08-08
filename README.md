@@ -1,7 +1,6 @@
 # wallet-core-essentials
 [![npm version](https://img.shields.io/npm/v/@kitzen/wallet-core-essentials?color=green)](https://www.npmjs.com/package/@kitzen/wallet-core-essentials)
 [![from kitzen with Love](https://img.shields.io/badge/from%20kitzen%20with-%F0%9F%A4%8D-red)](https://kitzen.io/)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkitzen-io%2Fwallet-core-essentials.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkitzen-io%2Fwallet-core-essentials?ref=badge_shield)
 ![test](https://github.com/kitzen-io/wallet-core-essentials/workflows/build-publish/badge.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/kitzen-io/wallet-core-essentials/badge.svg)](https://snyk.io/test/github/kitzen-io/wallet-core-essentials)
 
@@ -75,6 +74,3 @@ Thank you to all the dedicated individuals who contribute; your passion drives o
   <img src="https://contrib.rocks/image?repo=kitzen-io/wallet-core-essentials&max=400&columns=20" />
   <img src="https://us-central1-tooljet-hub.cloudfunctions.net/github" width="0" height="0" />
 </a>
-
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkitzen-io%2Fwallet-core-essentials.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkitzen-io%2Fwallet-core-essentials?ref=badge_large)
