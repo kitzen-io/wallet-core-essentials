@@ -811,10 +811,10 @@
   resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.21.tgz#7b749f8a4548c750f4ee7e7c7b9f9a88fb083328"
   integrity sha512-MjW2hTY8zF47YwUXA1CGCrW6L/tCuzsPcEMzfY5+g2u09upq7bSp6rW/Bl4Mfhk+Tn1kPdNVfNMs2pdXuildUg==
 
-"@kitzen/tronweb@5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@kitzen/tronweb/-/tronweb-5.3.0.tgz#687e9d8d4d441d8a5f844261c393a2a5ec6616c0"
-  integrity sha512-bReUXJeOyNcizUzAGjr6x0HjItFzenbEkwRTWVTyhcY3tAGQh+eALtTqXLUt1kdWjewyIRL19/iS992OPkVpkQ==
+"@kitzen/tronweb@5.3.1":
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/@kitzen/tronweb/-/tronweb-5.3.1.tgz#36b45bfae6928da346a21aaaf1aaec4158922bbf"
+  integrity sha512-ZpfCLk34bREskRBWylelAUQRmBIU+mAGb65XTdgTP8wx6txArJoB6aQveKs6WBnDwtf2DbghKIx6idgWAhYc6Q==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@tronweb3/google-protobuf" "^3.21.2"
