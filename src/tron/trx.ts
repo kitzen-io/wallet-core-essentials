@@ -1,5 +1,4 @@
-import { signMessage } from '@kitzen/tronweb/src/utils/message';
-import { pkToAddress } from '@kitzen/tronweb/src/utils/crypto';
+import { signMessage, pkToAddress } from './tronweb';
 import { Address } from '../interface/interfaces';
 
 export class Tron {
