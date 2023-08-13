@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 
 
 class CalculationTool {
-  public static FIAT_DECIMALS = 10000;
+  public static FIAT_DECIMALS = 4;
 
   /**
    * For example toPenny(1, 'btc') - converts 1 btc to satoshi, returns 100000000
