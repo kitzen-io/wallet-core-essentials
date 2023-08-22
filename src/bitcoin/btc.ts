@@ -21,8 +21,11 @@ import {
 } from '../interface/interfaces';
 import { TransactionInput } from 'bitcoinjs-lib/src/psbt';
 import type { PsbtInput } from 'bip174/src/lib/interfaces';
-import { TransactionErrorsEnum } from '@kitzen/data-transfer-objects';
-import { DEFAULT_DERIVE_PATH } from '../tool/consts';
+import {
+  IAddressDto,
+  TransactionErrorsEnum,
+} from '@kitzen/data-transfer-objects';
+import type { Transaction } from 'bitcoinjs-lib';
 
 export class Btc {
 
@@ -131,7 +134,18 @@ export class Btc {
     return this.ecPair.fromWIF(wif);
   }
 
-  public createTransaction(params: CreateTransactionInput): Psbt {
+  public calculateTransactionVirtualSize(params: Omit<CreateTransactionInput, 'fee'>): number {
+    // Create a transaction without see and see how many bytes it would have
+    let transaction = this.createTransaction({ ...params, fee: BigInt(0) });
+
+    // include the fee in transaction and recalculate its virtual size again.
+    let fee = BigInt(transaction.virtualSize() * params.pricePerByte);
+    // Then we create and return a real transaction here
+    // of course there's a chance that fee would be different and virtualSize as well, but it's small.
+    return this.createTransaction({ ...params, fee }).virtualSize();
+  }
+
+  public createTransaction(params: Omit<CreateTransactionInput, 'pricePerByte'>): Transaction {
     const transaction = new Psbt({ network: networks.bitcoin });
     let unspentAmount = BigInt(0);
 
@@ -185,28 +199,17 @@ export class Btc {
     for (let i = 0; i < inputs.length; i++) {
       const utx = params.utxo[i];
 
-      const foundedAddress = params.allAddresses.find((addressInstanse) => addressInstanse.address === utx.address);
+      const foundedAddress: IAddressDto | undefined = params.allAddresses.find((addressInstanse) => addressInstanse.address === utx.address);
       if (!foundedAddress) {
         throw new Error(TransactionErrorsEnum.SIGN_ISSUE);
       }
 
-      transaction.signInput(i, this.getEcpair(DEFAULT_DERIVE_PATH, params.privateKeyBase58));
+      transaction.signInput(i, this.getEcpair(foundedAddress.path, params.privateKeyBase58));
     }
 
     transaction.finalizeAllInputs();
 
-    if (params.fee == BigInt(0)) {
-      // We create transaction with fee 0, just estimate its virtual size
-      params.fee = BigInt(transaction.extractTransaction().virtualSize() * params.pricePerByte);
-      if (params.fee == BigInt(0)) {
-        throw Error('Invalid implementation'); // this never happens
-      }
-      // Then we create and return a real transaction here
-      // of course there's a chance that fee would be different and virtualSize as well, but it's small.
-      return this.createTransaction(params);
-    }
-
-    return transaction;
+    return transaction.extractTransaction();
   }
 
 
