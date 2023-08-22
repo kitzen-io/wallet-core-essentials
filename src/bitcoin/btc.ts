@@ -1,9 +1,28 @@
 // import { IBip32Derivation } from '@prominence-group/common-lib/web';
-import { BIP32API, BIP32Interface } from 'bip32';
-import { Network, networks, payments } from 'bitcoinjs-lib';
+import {
+  BIP32API,
+  BIP32Interface,
+} from 'bip32';
+import {
+  Network,
+  networks,
+  payments,
+  Psbt,
+} from 'bitcoinjs-lib';
 import * as bitcoinMessage from 'bitcoinjs-message';
-import { ECPairAPI } from 'ecpair';
-import { BIP39API, WalletPrivateData } from '../interface/interfaces';
+import {
+  ECPairAPI,
+  ECPairInterface,
+} from 'ecpair';
+import {
+  BIP39API,
+  CreateTransactionInput,
+  WalletPrivateData,
+} from '../interface/interfaces';
+import { TransactionInput } from 'bitcoinjs-lib/src/psbt';
+import type { PsbtInput } from 'bip174/src/lib/interfaces';
+import { TransactionErrorsEnum } from '@kitzen/data-transfer-objects';
+import { DEFAULT_DERIVE_PATH } from '../tool/consts';
 
 export class Btc {
 
@@ -106,6 +125,90 @@ export class Btc {
   private getBTCAddress(wallet: BIP32Interface, network?: Network): string {
     return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
   }
+
+  public getEcpair(path: string, privateKeyBase58: string): ECPairInterface {
+    const wif = this.bip32.fromBase58(privateKeyBase58, networks.bitcoin).derivePath(path).toWIF();
+    return this.ecPair.fromWIF(wif);
+  }
+
+  public createTransaction(params: CreateTransactionInput): Psbt {
+    const transaction = new Psbt({ network: networks.bitcoin });
+    let unspentAmount = BigInt(0);
+
+    let amountToReceive: number = 0;
+    const inputs: TransactionInput[] = [];
+    for (const utx of params.utxo) {
+      // we got enough money from current unspent transaction output, so we don't need more
+      if (unspentAmount >= params.amount + params.fee) {
+        break;
+      }
+
+      unspentAmount = unspentAmount + BigInt(utx.amount);
+      const input: TransactionInput & PsbtInput = {
+        hash: utx.txId,
+        index: utx.vout,
+        witnessUtxo: {
+          script: Buffer.from(utx.script, 'hex'),
+          value: +utx.amount,
+        },
+      };
+      inputs.push(input);
+    }
+    transaction.addInputs(inputs);
+
+
+    const requiredAmount: bigint = params.spendOwnFee ? params.amount + params.fee : params.amount - params.fee;
+    if (requiredAmount > unspentAmount) {
+      throw new Error(TransactionErrorsEnum.INSUFFICIENT_FUNDS);
+    }
+
+    if (params.spendOwnFee) {
+      amountToReceive = +params.amount.toString();
+    } else {
+      amountToReceive = +(params.amount - params.fee).toString();
+    }
+
+    const diff = unspentAmount - params.amount - params.fee;
+
+    transaction.addOutput({
+      address: params.to,
+      value: amountToReceive,
+    });
+
+    if (diff > 0) {
+      transaction.addOutput({
+        address: params.changeAddress,
+        value: +diff.toString(),
+      });
+    }
+
+    for (let i = 0; i < inputs.length; i++) {
+      const utx = params.utxo[i];
+
+      const foundedAddress = params.allAddresses.find((addressInstanse) => addressInstanse.address === utx.address);
+      if (!foundedAddress) {
+        throw new Error(TransactionErrorsEnum.SIGN_ISSUE);
+      }
+
+      transaction.signInput(i, this.getEcpair(DEFAULT_DERIVE_PATH, foundedAddress!.path));
+    }
+
+    transaction.finalizeAllInputs();
+
+    if (params.fee == BigInt(0)) {
+      // We create transaction with fee 0, just estimate its virtual size
+      params.fee = BigInt(transaction.extractTransaction().virtualSize() * params.pricePerByte);
+      if (params.fee == BigInt(0)) {
+        throw Error('Invalid implementation'); // this never happens
+      }
+      // Then we create and return a real transaction here
+      // of course there's a chance that fee would be different and virtualSize as well, but it's small.
+      return this.createTransaction(params);
+    }
+
+    return transaction;
+  }
+
 
   //
   // public async signTransaction(psbtBase64: string, derivationPath: string): Promise<string> {
