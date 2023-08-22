@@ -4,6 +4,7 @@ import {
   generateMnemonic
 } from "bip39";
 import walletPrivateData from './fixtures/wallet-private-data.json'
+
 describe('btc', () => {
   beforeAll(() => {
     CryptoFactory.setBip39({

@@ -190,7 +190,7 @@ export class Btc {
         throw new Error(TransactionErrorsEnum.SIGN_ISSUE);
       }
 
-      transaction.signInput(i, this.getEcpair(DEFAULT_DERIVE_PATH, foundedAddress!.path));
+      transaction.signInput(i, this.getEcpair(DEFAULT_DERIVE_PATH, params.privateKeyBase58));
     }
 
     transaction.finalizeAllInputs();

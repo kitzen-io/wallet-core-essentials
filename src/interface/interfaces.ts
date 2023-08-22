@@ -31,4 +31,5 @@ export interface CreateTransactionInput {
   spendOwnFee: boolean;
   fee: bigint;
   allAddresses: IAddressDto[];
+  privateKeyBase58: string;
 }
