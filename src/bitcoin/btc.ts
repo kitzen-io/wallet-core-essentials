@@ -146,6 +146,13 @@ export class Btc {
   }
 
   public createTransaction(params: Omit<CreateTransactionInput, 'pricePerByte'>): Transaction {
+    if (typeof params.amount != 'bigint' || typeof params.fee != 'bigint') {
+      // this check is crucial, since amoutn and fee are passes as string from backend
+      // And the result of 200 + '400' = 200400,
+      // which would lead to a big blunder is someone uses this function incorrectly
+      // so typescript typechecking is not enough!
+      throw Error('amount and fee should be bigints');
+    }
     const transaction = new Psbt({ network: networks.bitcoin });
     let unspentAmount = BigInt(0);
 
