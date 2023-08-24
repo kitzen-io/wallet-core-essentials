@@ -571,10 +571,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kitzen/data-transfer-objects@^1.0.21":
-  version "1.0.21"
-  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.21.tgz#7b749f8a4548c750f4ee7e7c7b9f9a88fb083328"
-  integrity sha512-MjW2hTY8zF47YwUXA1CGCrW6L/tCuzsPcEMzfY5+g2u09upq7bSp6rW/Bl4Mfhk+Tn1kPdNVfNMs2pdXuildUg==
+"@kitzen/data-transfer-objects@^1.0.40":
+  version "1.0.40"
+  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.40.tgz#c9788739eb36984d6c120bf2e36ac20fa7795408"
+  integrity sha512-pYzuMGlTYGIW4DdO2+WuvHwjWlqsl5LsuPPhjWbIrNaDm4g8FnTc4A9CfFiPy6/PelrwAqTqurTBEjc68EOxqw==
 
 "@noble/hashes@1.1.2":
   version "1.1.2"

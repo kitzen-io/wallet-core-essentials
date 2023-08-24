@@ -1,0 +1,41 @@
+{
+  "allAddresses": [
+    {
+      "address": "bc1qqe0e26lzymlvvxw4urav3lzquqks6skqgwcgxj",
+      "message": "a4828de1-e23d-46b9-be99-c6a4d18f95f9",
+      "network": "btc",
+      "path": "m/84'/0'/0'/0/0",
+      "signature": "KL8//CFBXNW0cga7gGI/nxzolm8CkUQQvy0XGzYcaNsEOitVmxFJ2P0tQrh1K+Zaw5heMUFp7zM/Ky2qHsKZPt4=",
+      "type": "receive"
+    },
+    {
+      "address": "bc1q5ww3c8l0qsp5xk7afmn6puyhg940m2ldsy9r40",
+      "message": "a4828de1-e23d-46b9-be99-c6a4d18f95f9",
+      "network": "btc",
+      "path": "m/84'/0'/0'/1/0",
+      "signature": "J4anKO3SNRFhjFd6rDFZyMeFkJkM3i/1kAi+mxssj0BJS1QydpDgS3DT29nXoflucJrBcPh2suyIzMAM8Mf1GWU=",
+      "type": "change"
+    }
+  ],
+  "amount": 200,
+  "changeAddress": "bc1q5ww3c8l0qsp5xk7afmn6puyhg940m2ldsy9r40",
+  "pricePerByte": 7,
+  "privateKeyBase58": "xprv9s21ZrQH143K3wkZFYV6ZFLGoyReRc1TyAoQCmsftd8AxDJg3Eec6RxvYxPEWq9cq2u7dKErHgsoyyWoXpR4oENtFHD3rUTu7oFWPqEMk5V",
+  "spendOwnFee": true,
+  "to": "bc1qasa2skl3tv0p2pl9y8jy8rwpdj0qxcgsdll9sy",
+  "utxo": [
+    {
+      "__v": 0,
+      "_id": "64e42e9123d1ccf587d5f447",
+      "address": "bc1q5ww3c8l0qsp5xk7afmn6puyhg940m2ldsy9r40",
+      "amount": "66069",
+      "confirmations": 0,
+      "script": "0014a39d1c1fef0403435bdd4ee7a0f097416afdabed",
+      "status": "READY",
+      "tradeId": null,
+      "txId": "ef6b16d700b0dc8ddfd85adb7d9af07af553c99b7506bbaab8bbc6a31d4070d6",
+      "userId": "fda8ecd3-a706-4c5b-9ce3-f3e785e79ce0",
+      "vout": 1
+    }
+  ]
+}
