@@ -135,7 +135,7 @@ export class Btc {
   }
 
   public calculateTransactionVirtualSize(params: Omit<CreateTransactionInput, 'fee'>): number {
-    // Create a transaction without see and see how many bytes it would have
+    // Create a transaction without fee and see how many bytes it would have
     let transaction = this.createTransaction({ ...params, fee: BigInt(0) });
 
     // include the fee in transaction and recalculate its virtual size again.
