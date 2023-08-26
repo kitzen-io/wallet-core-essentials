@@ -42,6 +42,14 @@ export class PrintTool {
     return `${num.toFixed(decimals)} ${coinSymbol}`;
   }
 
+  public printCoinName(network: BlockchainNetworkEnum, identifier: string): string {
+    return this.assetsInfo[network]?.[identifier]?.symbol || '?';
+  }
+
+  public getDecimals(network: BlockchainNetworkEnum, identifier: string): number {
+    return this.assetsInfo[network]?.[identifier]?.decimals || 1;
+  }
+
   public printCryptoFromNativeStr(num: string): string {
     return this.printCrypto(Number(num));
   }

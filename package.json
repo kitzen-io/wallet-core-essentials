@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "build": "rm -rf lib && tsc",
-    "test": "jest"
+    "test": "jest",
+    "watch": "rm -rf lib && tsc --watch"
   },
   "engines": {
     "node": ">=16"
@@ -35,7 +36,7 @@
     "lib"
   ],
   "dependencies": {
-    "@kitzen/data-transfer-objects": "^1.0.40",
+    "@kitzen/data-transfer-objects": "/home/andrew/it/tony-crypto/frontend/api-dto",
     "@noble/secp256k1": "1.6.3",
     "bignumber.js": "^9.1.1",
     "bip32": "3.0.1",
@@ -48,12 +49,16 @@
     "patch-package": "^7.0.2",
     "stream-browserify": "^3.0.0"
   },
+  "peerDependencies": {
+    "@kitzen/assets": "*"
+  },
   "devDependencies": {
-    "bip39": "3.0.4",
+    "@kitzen/assets": "^1.0.13",
     "@types/create-hmac": "^1.1.0",
     "@types/jest": "^26.0.0",
     "@typescript-eslint/eslint-plugin": "5.36.1",
     "@typescript-eslint/parser": "5.36.1",
+    "bip39": "3.0.4",
     "eslint": "^8.14.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-import": "^2.22.0",
