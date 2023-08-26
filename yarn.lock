@@ -571,10 +571,16 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kitzen/data-transfer-objects@^1.0.40":
-  version "1.0.40"
-  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.40.tgz#c9788739eb36984d6c120bf2e36ac20fa7795408"
-  integrity sha512-pYzuMGlTYGIW4DdO2+WuvHwjWlqsl5LsuPPhjWbIrNaDm4g8FnTc4A9CfFiPy6/PelrwAqTqurTBEjc68EOxqw==
+"@kitzen/assets@^1.0.13":
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.13.tgz#4c835f5ad94d1c63e9b6797a7f15e1c10d6e151f"
+  integrity sha512-5NmMFkn6bmUQd2SoWloO/Mm6PuJW/rXQpV5y0ng3jt6hNdltvT7OhUEGYtBKiq6GkCfknerW9xcuMJ1pByrcRA==
+
+"@kitzen/data-transfer-objects@/home/andrew/it/tony-crypto/frontend/api-dto":
+  version "1.0.41"
+
+"@kitzen/data-transfer-objects@file:../api-dto":
+  version "1.0.41"
 
 "@noble/hashes@1.1.2":
   version "1.1.2"

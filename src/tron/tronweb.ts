@@ -1,10 +1,10 @@
 import {
   concat,
   keccak256,
+  sha256,
   Signature,
   SigningKey,
   toUtf8Bytes,
-  sha256,
 } from 'ethers';
 
 import { Point } from '@noble/secp256k1';
@@ -19,6 +19,8 @@ for (let i = 0; i < ALPHABET.length; i++) {
 }
 
 const BASE = 58;
+
+
 
 export function hexChar2byte(c): number {
   let d;
@@ -120,6 +122,115 @@ export function computeAddress(pubBytes): number[] {
   return hexStr2byteArray(addressHex);
 }
 
+export function byte2hexStr(byte): string {
+  if (typeof byte !== 'number')
+    throw new Error('Input must be a number');
+
+  if (byte < 0 || byte > 255)
+    throw new Error('Input must be a byte');
+
+  const hexByteMap = '0123456789ABCDEF';
+
+  let str = '';
+  str += hexByteMap.charAt(byte >> 4);
+  str += hexByteMap.charAt(byte & 0x0f);
+
+  return str;
+}
+
+
+export function toHex() {
+
+}
+
+export function byteArray2hexStr(byteArray): string {
+  let str: string = '';
+
+  for (let i = 0; i < (byteArray.length); i++)
+    str += byte2hexStr(byteArray[i]);
+
+  return str;
+}
+
+export function decode58(string): number[] {
+  if (string.length === 0)
+    return [];
+
+  let i;
+  let j;
+
+  const bytes = [0];
+
+  for (i = 0; i < string.length; i++) {
+    const c = string[i];
+
+    if (!(c in ALPHABET_MAP))
+      throw new Error('Non-base58 character');
+
+    for (j = 0; j < bytes.length; j++)
+      bytes[j] *= BASE;
+
+    bytes[0] += ALPHABET_MAP[c];
+    let carry = 0;
+
+    for (j = 0; j < bytes.length; ++j) {
+      bytes[j] += carry;
+      carry = bytes[j] >> 8;
+      bytes[j] &= 0xff;
+    }
+
+    while (carry) {
+      bytes.push(carry & 0xff);
+      carry >>= 8;
+    }
+  }
+
+  for (i = 0; string[i] === '1' && i < string.length - 1; i++)
+    bytes.push(0);
+
+  return bytes.reverse();
+}
+
+
+// eslint-ignore  camelCase(@typescript-eslint/naming-convention)
+export function SHA256(msgBytes): number[] {
+  const msgHex = byteArray2hexStr(msgBytes);
+  const hashHex = sha256('0x' + msgHex).replace(/^0x/, '');
+  return hexStr2byteArray(hashHex);
+}
+
+export function decodeBase58Address(base58Sting): false | number[] {
+  if (typeof (base58Sting) != 'string')
+    return false;
+
+  if (base58Sting.length <= 4)
+    return false;
+
+  let address = decode58(base58Sting);
+
+  if (base58Sting.length <= 4)
+    return false;
+
+  const len = address.length;
+  const offset = len - 4;
+  const checkSum = address.slice(offset);
+
+  address = address.slice(0, offset);
+
+  const hash0 = SHA256(address);
+  const hash1 = SHA256(hash0);
+  const checkSum1 = hash1.slice(0, 4);
+
+  if (checkSum[0] == checkSum1[0] && checkSum[1] == checkSum1[1] && checkSum[2] ==
+    checkSum1[2] && checkSum[3] == checkSum1[3]
+  ) {
+    return address;
+  }
+
+  throw new Error('Invalid address provided');
+}
+
+
 export function encode58(buffer): string {
   if (buffer.length === 0)
     return '';
@@ -154,30 +265,11 @@ export function encode58(buffer): string {
   return digits.reverse().map(digit => ALPHABET[digit]).join('');
 }
 
-export function byte2hexStr(byte): string {
-  if (typeof byte !== 'number')
-    throw new Error('Input must be a number');
 
-  if (byte < 0 || byte > 255)
-    throw new Error('Input must be a byte');
 
-  const hexByteMap = '0123456789ABCDEF';
 
-  let str = '';
-  str += hexByteMap.charAt(byte >> 4);
-  str += hexByteMap.charAt(byte & 0x0f);
 
-  return str;
-}
 
-export function byteArray2hexStr(byteArray): string {
-  let str: string = '';
-
-  for (let i = 0; i < (byteArray.length); i++)
-    str += byte2hexStr(byteArray[i]);
-
-  return str;
-}
 
 export function getSha256(msgBytes): number[] {
   const msgHex = byteArray2hexStr(msgBytes);
