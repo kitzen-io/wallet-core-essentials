@@ -33,7 +33,7 @@ export class PrintTool {
     return tx;
   }
 
-  public printCrypto(num: number | undefined, network?: BlockchainNetworkEnum, identifier: string = 'coin'): string {
+  public printCrypto(num: number, network: BlockchainNetworkEnum, identifier: string = 'coin'): string {
     if (!num || !network || !identifier) {
       return '?';
     }
@@ -50,8 +50,8 @@ export class PrintTool {
     return this.assetsInfo[network]?.[identifier]?.decimals || 1;
   }
 
-  public printCryptoFromNativeStr(num: string): string {
-    return this.printCrypto(Number(num));
+  public printCryptoFromNativeStr(num: string, network: BlockchainNetworkEnum, identifier = 'coin'): string {
+    return this.printCrypto(Number(num), network, identifier);
   }
 
   public printFiatAsset(asset?: AssetIdentifierWithRate): string {
@@ -85,7 +85,10 @@ export class PrintTool {
 
 
   public printCryptoAsset(asset?: AssetIdentifier): string {
-    return this.printCrypto(this.getAssetInCrypto(asset), asset?.network, asset?.identifier);
+    if (!asset) {
+      return '?';
+    }
+    return this.printCrypto(this.getAssetInCrypto(asset), asset.network, asset.identifier);
   }
 
   public getAssetInFiat(asset?: AssetIdentifierWithRate): number {
