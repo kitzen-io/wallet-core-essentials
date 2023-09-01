@@ -38,6 +38,7 @@
   "dependencies": {
     "@kitzen/data-transfer-objects": "/home/andrew/it/tony-crypto/frontend/api-dto",
     "@noble/secp256k1": "1.6.3",
+    "@tronscan/client": "^0.2.81",
     "bignumber.js": "^9.1.1",
     "bip32": "3.0.1",
     "bitcoinjs-lib": "^6.1.3",

@@ -6,7 +6,6 @@ import {
   SigningKey,
   toUtf8Bytes,
 } from 'ethers';
-
 import { Point } from '@noble/secp256k1';
 
 export const TRON_MESSAGE_PREFIX = '\x19TRON Signed Message:\n';
@@ -19,7 +18,6 @@ for (let i = 0; i < ALPHABET.length; i++) {
 }
 
 const BASE = 58;
-
 
 
 export function hexChar2byte(c): number {
@@ -139,9 +137,6 @@ export function byte2hexStr(byte): string {
 }
 
 
-export function toHex() {
-
-}
 
 export function byteArray2hexStr(byteArray): string {
   let str: string = '';
@@ -264,11 +259,6 @@ export function encode58(buffer): string {
 
   return digits.reverse().map(digit => ALPHABET[digit]).join('');
 }
-
-
-
-
-
 
 
 export function getSha256(msgBytes): number[] {
