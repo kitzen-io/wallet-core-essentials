@@ -19,12 +19,12 @@ describe('trx', () => {
     let result = trx.getAddressFromPrivateKey('1d742c9a796aba395b9482717c5e539dc3c64becf9f3a8795277f16209a150af');
     expect(result).toStrictEqual([{ address: 'TDRb4GFiWU3dG5uxcx5kveszvcMagB8Vuu', derivePath: "m/84'/0'/0'/0/0" }]);
   });
-  test('toHex', () => {
-    let trx = new Tron();
-    // don't be too happy :)
-    // this is non-existing wallet private key and id
-   expect(trx.toHex('TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht')).toEqual('417A8649ABFA3D24F8D0DC70D2B6D50E4F8A6F7613');
-  });
+  // test('toHex', () => {
+  //   let trx = new Tron();
+  //   // don't be too happy :)
+  //   // this is non-existing wallet private key and id
+  //  expect(trx.toHex('TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht')).toEqual('417A8649ABFA3D24F8D0DC70D2B6D50E4F8A6F7613');
+  // });
 
   test('createTrxTransaction', () => {
     let trx = new Tron();

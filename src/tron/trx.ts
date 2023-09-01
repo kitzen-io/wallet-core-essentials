@@ -1,21 +1,23 @@
 import {
-  byteArray2hexStr,
-  decodeBase58Address,
+  decode58Check,
   pkToAddress,
-  signMessage,
-} from './tronweb';
+  signTransaction,
+} from '@tronscan/client/src/utils/crypto';
 import {
   Address,
   CreateTrxTransactionParams,
 } from '../interface/interfaces';
 
 import google_protobuf_any_pb from 'google-protobuf/google/protobuf/any_pb.js';
-import {
-  decode58Check,
-  signTransaction,
-} from '@tronscan/client/src/utils/crypto';
 import { TransferContract } from '@tronscan/client/src/protocol/core/Contract_pb';
 import { Transaction } from '@tronscan/client/src/protocol/core/Tron_pb';
+import {
+  concat,
+  keccak256,
+  Signature,
+  SigningKey,
+  toUtf8Bytes,
+} from 'ethers';
 
 
 export class Tron {
@@ -24,15 +26,36 @@ export class Tron {
     return [{ address, derivePath: "m/84'/0'/0'/0/0" }];
   }
 
+  private hashMessage(message): string {
+    const TRON_MESSAGE_PREFIX = '\x19TRON Signed Message:\n';
+    if (typeof (message) === 'string') {
+      message = toUtf8Bytes(message);
+    }
+
+    if (Array.isArray(message)) {
+      message = new Uint8Array(message);
+    }
+
+    return keccak256(concat([
+      toUtf8Bytes(TRON_MESSAGE_PREFIX),
+      toUtf8Bytes(String(message.length)),
+      message,
+    ]));
+  }
+
   public signMessage(message: string, privateKeyHex: string): string {
-    return signMessage(message, privateKeyHex);
+    if (!privateKeyHex.match(/^0x/)) {
+      privateKeyHex = '0x' + privateKeyHex;
+    }
+
+    const signingKey = new SigningKey(privateKeyHex);
+    const messageDigest = this.hashMessage(message);
+    const signature = signingKey.sign(messageDigest);
+
+    return Signature.from(signature).serialized;
   }
 
-  public toHex(value: string): string {
-    return byteArray2hexStr(decodeBase58Address(value));
-  }
-
-  public hexToUnitArray(hexString: string): Uint8Array {
+  private hexToUnitArray(hexString: string): Uint8Array {
     // https://stackoverflow.com/a/50868276/3872976
     return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
   }
