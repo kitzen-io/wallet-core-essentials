@@ -26,23 +26,6 @@ export class Tron {
     return [{ address, derivePath: "m/84'/0'/0'/0/0" }];
   }
 
-  private hashMessage(message): string {
-    const TRON_MESSAGE_PREFIX = '\x19TRON Signed Message:\n';
-    if (typeof (message) === 'string') {
-      message = toUtf8Bytes(message);
-    }
-
-    if (Array.isArray(message)) {
-      message = new Uint8Array(message);
-    }
-
-    return keccak256(concat([
-      toUtf8Bytes(TRON_MESSAGE_PREFIX),
-      toUtf8Bytes(String(message.length)),
-      message,
-    ]));
-  }
-
   public signMessage(message: string, privateKeyHex: string): string {
     if (!privateKeyHex.match(/^0x/)) {
       privateKeyHex = '0x' + privateKeyHex;
@@ -53,11 +36,6 @@ export class Tron {
     const signature = signingKey.sign(messageDigest);
 
     return Signature.from(signature).serialized;
-  }
-
-  private hexToUnitArray(hexString: string): Uint8Array {
-    // https://stackoverflow.com/a/50868276/3872976
-    return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
   }
 
   public createTrxTransaction(args: CreateTrxTransactionParams): any {
@@ -96,6 +74,28 @@ export class Tron {
   public signTransaction(transaction: any, privateKey: string): string {
     let a = signTransaction(privateKey, transaction);
     return a.hex;
+  }
+
+  private hashMessage(message): string {
+    const TRON_MESSAGE_PREFIX = '\x19TRON Signed Message:\n';
+    if (typeof (message) === 'string') {
+      message = toUtf8Bytes(message);
+    }
+
+    if (Array.isArray(message)) {
+      message = new Uint8Array(message);
+    }
+
+    return keccak256(concat([
+      toUtf8Bytes(TRON_MESSAGE_PREFIX),
+      toUtf8Bytes(String(message.length)),
+      message,
+    ]));
+  }
+
+  private hexToUnitArray(hexString: string): Uint8Array {
+    // https://stackoverflow.com/a/50868276/3872976
+    return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
   }
 }
 
