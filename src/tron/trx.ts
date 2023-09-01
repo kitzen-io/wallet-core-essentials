@@ -8,7 +8,7 @@ import {
   CreateTrxTransactionParams,
 } from '../interface/interfaces';
 
-import google_protobuf_any_pb from 'google-protobuf/google/protobuf/any_pb.js';
+import { Any } from 'google-protobuf/google/protobuf/any_pb.js';
 import { TransferContract } from '@tronscan/client/src/protocol/core/Contract_pb';
 import { Transaction } from '@tronscan/client/src/protocol/core/Tron_pb';
 import {
@@ -18,6 +18,7 @@ import {
   SigningKey,
   toUtf8Bytes,
 } from 'ethers';
+import { ITronGetBlockResponse } from '@kitzen/data-transfer-objects';
 
 
 export class Tron {
@@ -42,32 +43,24 @@ export class Tron {
     // this method will create a transaction with required fields on Tron network
     // example of required fields can be checked in TronAPI
     // https://developers.tron.network/reference/broadcasttransaction
-    let transferContract = new TransferContract();
+    const transferContract = new TransferContract();
     transferContract.setToAddress(Uint8Array.from(decode58Check(args.to)));
     transferContract.setOwnerAddress(Uint8Array.from(decode58Check(args.from)));
     transferContract.setAmount(args.amount);
-    let anyValue = new google_protobuf_any_pb.Any();
-    anyValue.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
-    let contract = new Transaction.Contract();
-    contract.setType(Transaction.Contract.ContractType.TRANSFERCONTRACT);
-    contract.setParameter(anyValue);
-    let raw = new Transaction.raw();
-    raw.addContract(contract);
-    let data = args.blockInfo;
-    // get Hex representation of a number with toString(16)
-    // and get last 4 bytes, if there are less bytes fill left bytes with 0
 
-    // this part is portially from TronWeb
-    // https://github.com/kitzen-io/tronweb/blob/180e87e6b580d2ce2b00d2eea2d966a808d94657/src/lib/transactionBuilder.js#L80
-    //
-    let hexRefBlockEnd = data.block_header.raw_data.number.toString(16).slice(-4).padStart(4, '0');
-    raw.setRefBlockBytes(this.hexToUnitArray(hexRefBlockEnd)); // Set refBlockBytes using block number
-    raw.setRefBlockHash(this.hexToUnitArray(data.blockID.slice(16, 32))); // Set refBlockBytes using block number
-    // 1 minute should be enough to finish transaction
-    raw.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // Set refBlockBytes using block number
-    raw.setTimestamp(data.block_header.raw_data.timestamp); // Set refBlockBytes using block number
-    let transaction = new Transaction();
-    transaction.setRawData(raw);
+    const protoBufTransferContract = new Any();
+    // node_modules/@tronscan/client/protobuf/core/Tron.proto
+    // pack(binary, 'package.message')
+    protoBufTransferContract.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
+    const contract = new Transaction.Contract();
+    contract.setType(Transaction.Contract.ContractType.TRANSFERCONTRACT);
+    contract.setParameter(protoBufTransferContract);
+
+    const transactionRaw = new Transaction.raw();
+    transactionRaw.addContract(contract);
+    this.addRefBlockToTransaction(args.blockInfo, transactionRaw);
+    const transaction = new Transaction();
+    transaction.setRawData(transactionRaw);
     return transaction;
   }
 
@@ -96,6 +89,22 @@ export class Tron {
   private hexToUnitArray(hexString: string): Uint8Array {
     // https://stackoverflow.com/a/50868276/3872976
     return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
+  }
+
+  private addRefBlockToTransaction(data: ITronGetBlockResponse, rawTransaction): void {
+    // get Hex representation of a number with toString(16)
+    // and get last 4 bytes, if there are fewer bytes - fill left bytes with 0
+
+    // this part is partially from TronWeb
+    // https://github.com/kitzen-io/tronweb/blob/180e87e6b580d2ce2b00d2eea2d966a808d94657/src/lib/transactionBuilder.js#L80
+    //
+    let hexRefBlockEnd = data.block_header.raw_data.number.toString(16).slice(-4).padStart(4, '0');
+
+    rawTransaction.setRefBlockBytes(this.hexToUnitArray(hexRefBlockEnd)); // Set refBlockBytes using block number
+    rawTransaction.setRefBlockHash(this.hexToUnitArray(data.blockID.slice(16, 32))); // Set refBlockBytes using block number
+    // 1 minute should be enough to finish transaction
+    rawTransaction.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // Set refBlockBytes using block number
+    rawTransaction.setTimestamp(data.block_header.raw_data.timestamp); // Set refBlockBytes using block number
   }
 }
 
