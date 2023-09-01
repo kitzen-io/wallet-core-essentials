@@ -86,7 +86,7 @@ export class Tron {
     ]));
   }
 
-  private hexToUnitArray(hexString: string): Uint8Array {
+  private hexToUnsignedIntArray(hexString: string): Uint8Array {
     // https://stackoverflow.com/a/50868276/3872976
     return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
   }
@@ -100,8 +100,8 @@ export class Tron {
     //
     let hexRefBlockEnd = data.block_header.raw_data.number.toString(16).slice(-4).padStart(4, '0');
 
-    rawTransaction.setRefBlockBytes(this.hexToUnitArray(hexRefBlockEnd)); // Set refBlockBytes using block number
-    rawTransaction.setRefBlockHash(this.hexToUnitArray(data.blockID.slice(16, 32))); // Set refBlockBytes using block number
+    rawTransaction.setRefBlockBytes(this.hexToUnsignedIntArray(hexRefBlockEnd)); // Set refBlockBytes using block number
+    rawTransaction.setRefBlockHash(this.hexToUnsignedIntArray(data.blockID.slice(16, 32))); // Set refBlockBytes using block number
     // 1 minute should be enough to finish transaction
     rawTransaction.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // Set refBlockBytes using block number
     rawTransaction.setTimestamp(data.block_header.raw_data.timestamp); // Set refBlockBytes using block number
