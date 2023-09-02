@@ -36,4 +36,50 @@ describe('trx', () => {
     expect(res2).toStrictEqual(createTrxTransactionRes);
   });
 
+  test('validateAddress', () => {
+    let trx = new Tron();
+    // don't be too happy :)
+    // this is non-existing wallet private key and id
+    expect(trx.validateAddress('TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht')).toEqual(true)
+    expect(trx.validateAddress('TM94JwXLN33Gw4L8KF1eBPaEEPcdQ06hht')).toEqual(false);
+  });
+
+  test('base58toHex', () => {
+    let trx = new Tron();
+    // don't be too happy :)
+    // this is non-existing wallet private key and id
+    expect(trx.base58toHex('TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht')).toEqual('417A8649ABFA3D24F8D0DC70D2B6D50E4F8A6F7613');
+  });
+
+
+  test('estimateTransactionFee', () => {
+    let trx = new Tron();
+    // don't be too happy :)
+    // this is non-existing wallet private key and id
+    expect(trx.estimateTransactionFee({
+      "to": "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
+      "amount": 130107,
+      "from": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
+      "privateKeyHex": privateKeyHex,
+      "accountResources": {
+        "freeNetLimit": 600,
+        "assetNetUsed": [
+          {
+            "key": "1004950",
+            "value": 0
+          }
+        ],
+        "assetNetLimit": [
+          {
+            "key": "1004950",
+            "value": 0
+          }
+        ],
+        "TotalNetLimit": 43200000000,
+        "TotalNetWeight": 41417889010,
+        "TotalEnergyLimit": 90000000000,
+        "TotalEnergyWeight": 5324333827
+      }
+    })).toEqual(0)
+  });
 });

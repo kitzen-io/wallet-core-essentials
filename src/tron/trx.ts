@@ -6,7 +6,9 @@ import {
 import {
   Address,
   CreateTrxTransactionParams,
+  EstimateTransactionFeeProps,
 } from '../interface/interfaces';
+import { byteArray2hexStr } from '@tronscan/client/src/utils/bytes';
 
 import { Any } from 'google-protobuf/google/protobuf/any_pb.js';
 import { TransferContract } from '@tronscan/client/src/protocol/core/Contract_pb';
@@ -22,9 +24,41 @@ import { ITronGetBlockResponse } from '@kitzen/data-transfer-objects';
 
 
 export class Tron {
+
+  // Tron address is 34 characters length, starting with T
+  // https://datatracker.ietf.org/doc/id/draft-msporny-base58-02.txt
+  // this is base58 base characters, no l, 0, O, etc
+  private addressRegex = /T[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{33}/;
+
+  // this one is used for calculation transaction fee
+  private dummyBlockInfo: ITronGetBlockResponse = {
+    'blockID': '00000000033c4d794602b25f8a1dad64e46b750ffe0452ee6d712ad41a816bae',
+    'block_header': {
+      'raw_data': {
+        'number': 54283641,
+        'txTrieRoot': '558b89b6192b0febef6bca019b0b7e41db4c7272b14a525569e2ce459c4b1979',
+        'witness_address': '414ce8225c8ea6c8e1e0a483132211610c765fc6df',
+        'parentHash': '00000000033c4d78e8fd3131520aecebe3449d84a7c08b8b0fe21fa2bf5e4eca',
+        'version': 28,
+        'timestamp': 1693481151000,
+      },
+      'witness_signature': 'a6ce36655266bb344aff4f0687fb281d77dfc17cae590fd1472f32f294e384c563f5c8cc46c97736b81cb51d68296f6c3126b0d231765927d041f04a26da77dc00',
+    },
+  };
+
+
   public getAddressFromPrivateKey(privateKeyHex: string): Address[] {
     let address = pkToAddress(privateKeyHex);
     return [{ address, derivePath: "m/84'/0'/0'/0/0" }];
+  }
+
+  // used in backend
+  public base58toHex(value: string): string {
+    return byteArray2hexStr(decode58Check(value));
+  }
+
+  public validateAddress(address: string): boolean {
+    return this.addressRegex.test(address);
   }
 
   public signMessage(message: string, privateKeyHex: string): string {
@@ -37,6 +71,24 @@ export class Tron {
     const signature = signingKey.sign(messageDigest);
 
     return Signature.from(signature).serialized;
+  }
+
+  public estimateTransactionFee({ accountResources, ...parameters }: EstimateTransactionFeeProps): number {
+    let transaction = this.createTrxTransaction({
+      from: parameters.from,
+      amount: parameters.amount,
+      to: parameters.to,
+      blockInfo: this.dummyBlockInfo,
+    });
+    const transactionHex = this.signTransaction(transaction, parameters.privateKeyHex);
+    // const availableEnergy = parameters.accountResources.TotalEnergyLimit - parameters.accountResources.TotalEnergyWeight;
+    const availableBandwidth = accountResources.TotalNetLimit - accountResources.TotalNetWeight + accountResources.freeNetLimit;
+
+    // This magic numbers were extracted from @kitzen/webExt, I don't do credit about whether it works or not
+    const howManyBandwidthNeed = Math.round(transactionHex.length / 2) + 68;
+
+    const paidBandwidth = howManyBandwidthNeed < availableBandwidth ? 0 : Math.round(Math.abs(availableBandwidth - howManyBandwidthNeed));
+    return paidBandwidth * 1000;
   }
 
   public createTrxTransaction(args: CreateTrxTransactionParams): any {

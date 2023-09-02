@@ -1,6 +1,5 @@
 import { ECPairFactory } from 'ecpair';
-import BIP32Factory, { BIP32API } from 'bip32';
-import { ECPairAPI } from 'ecpair/src/ecpair';
+import BIP32Factory from 'bip32';
 
 import { ecc } from './ecc';
 import { Btc } from './btc';
@@ -9,35 +8,18 @@ import { Tron } from '../tron/trx';
 
 
 export class CryptoFactory {
-  private static ecPair?: ECPairAPI;
-
-  private static bip32?: BIP32API;
-
   private static btc?: Btc;
 
   private static bip39?: BIP39API;
 
   private static tronWeb?: Tron;
 
-  public static getEcPair(): ECPairAPI {
-    if (!CryptoFactory.ecPair) {
-      CryptoFactory.ecPair = ECPairFactory(ecc);
-    }
-    return CryptoFactory.ecPair;
-  }
 
   public static getTrx(): Tron {
     if (!CryptoFactory.tronWeb) {
       CryptoFactory.tronWeb = new Tron();
     }
     return CryptoFactory.tronWeb;
-  }
-
-  public static getBip32(): BIP32API {
-    if (!CryptoFactory.bip32) {
-      CryptoFactory.bip32 = BIP32Factory(ecc);
-    }
-    return CryptoFactory.bip32;
   }
 
   public static setBip39(bip39: BIP39API): void {
@@ -53,8 +35,8 @@ export class CryptoFactory {
 
   public static getBtc(): Btc {
     if (!CryptoFactory.btc) {
-      let ecPair = CryptoFactory.getEcPair();
-      let bip32 = CryptoFactory.getBip32();
+      let ecPair = ECPairFactory(ecc);
+      let bip32 =  BIP32Factory(ecc);
       let bip39 = CryptoFactory.getBip39();
       CryptoFactory.btc = new Btc(ecPair, bip32, bip39);
     }

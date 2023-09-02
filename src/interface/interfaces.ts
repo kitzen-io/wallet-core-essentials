@@ -1,7 +1,8 @@
 import {
   IAddressDto,
+  ITronGetAccountResourcesResponse,
   ITronGetBlockResponse,
-  IUnspentTransaction
+  IUnspentTransaction,
 } from '@kitzen/data-transfer-objects';
 
 export interface BIP39API {
@@ -45,3 +46,13 @@ export interface CreateTrxTransactionParams {
   from: string;
   blockInfo: ITronGetBlockResponse;
 }
+
+
+export interface EstimateTransactionFeeProps {
+  accountResources: ITronGetAccountResourcesResponse;
+  from: string;
+  to: string;
+  amount: number;
+  privateKeyHex: string;
+}
+
