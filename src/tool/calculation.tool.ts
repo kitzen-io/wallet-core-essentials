@@ -72,6 +72,16 @@ class CalculationTool {
     return CalculationTool.toFixed(amount);
   }
 
+  public static multiply = (rate: string, balance: string, decimals: number): number => {
+    CalculationTool.setup();
+
+    return new BigNumber(rate)
+      .times(BigNumber(balance))
+      .div(Math.pow(10, decimals))
+      .dp(2)
+      .toNumber();
+  };
+
   /**
    * Convert fiat to crypto by currency rate
    * @param fiatCoins - penny coins. to convert 1 dollar to penny use method" `CalculationTool.toPenny(1, Coins.USD);`

@@ -3,6 +3,7 @@ import {
   IAssetBalance,
 } from '@kitzen/data-transfer-objects';
 import type { IAssetMetadata } from '@kitzen/assets';
+import CalculationTool from '../tool/calculation.tool';
 
 export type CoinIdentifier = Pick<IAssetBalance, 'identifier' | 'network'>;
 export type AssetIdentifier = Pick<IAssetBalance, 'identifier' | 'balance' | 'network'>;
@@ -58,14 +59,6 @@ export class PrintTool {
     return this.printFiat(this.getAssetInFiat(asset));
   }
 
-  private getAssetInCrypto(asset?: AssetIdentifier): number {
-    if (!asset) {
-      return 0;
-    }
-    let decimals = this.assetsInfo[asset.network][asset.identifier].decimals;
-    return Number(asset.balance) / Math.pow(10, decimals);
-  }
-
   public stringCryptoToBigIngSatoshi(asset?: AssetIdentifier): bigint {
     if (!asset || !asset.balance) {
       return BigInt(0);
@@ -88,14 +81,18 @@ export class PrintTool {
     if (!asset) {
       return '?';
     }
-    return this.printCrypto(this.getAssetInCrypto(asset), asset.network, asset.identifier);
+
+    let decimals = this.assetsInfo[asset.network][asset.identifier].decimals;
+    let inCrypto =  Number(asset.balance) / Math.pow(10, decimals);
+    return this.printCrypto(inCrypto, asset.network, asset.identifier);
   }
 
   public getAssetInFiat(asset?: AssetIdentifierWithRate): number {
     if (!asset) {
       return 0;
     }
-    return Number(asset.rate) * this.getAssetInCrypto(asset);
+    let decimals = this.assetsInfo[asset.network][asset.identifier].decimals;
+    return CalculationTool.multiply(asset.rate, asset.balance, decimals);
   }
 
   public printDate(date: string): string {

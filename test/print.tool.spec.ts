@@ -148,11 +148,11 @@ describe('print.tool', () => {
       const asset = {
         network: BlockchainNetworkEnum.BTC,
         identifier: 'coin',
-        rate: '1000',
-        balance: '12345678901',
+        rate: '0.0000000000012',
+        balance: '1234567890123423423129423',
       };
       const assetValueInFiat = printTool.getAssetInFiat(asset);
-      expect(assetValueInFiat).toBe(123456.78901);
+      expect(assetValueInFiat).toBe(14814.82);
     });
 
     it('should handle undefined input', () => {
