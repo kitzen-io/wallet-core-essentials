@@ -50,7 +50,7 @@ export class PrintTool {
     return this.assetsInfo[network]?.[identifier]?.decimals || 1;
   }
 
-  public printCryptoFromNativeStr(num: string, network: BlockchainNetworkEnum, identifier = 'coin'): string {
+  public parseStringFloatCrypto(num: string, network: BlockchainNetworkEnum, identifier = 'coin'): string {
     return this.printCrypto(Number(num), network, identifier);
   }
 
@@ -58,7 +58,7 @@ export class PrintTool {
     return this.printFiat(this.getAssetInFiat(asset));
   }
 
-  public getAssetInCrypto(asset?: AssetIdentifier): number {
+  private getAssetInCrypto(asset?: AssetIdentifier): number {
     if (!asset) {
       return 0;
     }
