@@ -7,6 +7,7 @@ export * from './api/utils';
 // export * from './tron/trx';
 export * from './bitcoin/btc';
 export * from './tool';
+export * from './tron';
 
 export {
   ecc,

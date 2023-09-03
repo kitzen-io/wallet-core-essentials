@@ -62,6 +62,15 @@ global.Buffer = Buffer;
 CryptoFactory.setBip39(bip39);
 ```
 
+
+## Tron hex message decode
+```bash
+# pacman -S extra/protobuf
+cd ./node_modules/@tronscan/client/protobuf
+echo 'long-hex-message-string-like-a30174b6c2223' | xxd -r -p - > message.bin
+protoc --decode protocol.Transaction core/Tron.proto < message.bin
+```
+
 # Contributing
 We deeply appreciate the valuable contributions made by our community. 
 To provide feedback or report bugs, [kindly open a GitHub issue](https://github.com/kitzen-io/wallet-core-essentials/issues/new).

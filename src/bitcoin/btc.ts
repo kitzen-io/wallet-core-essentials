@@ -3,6 +3,7 @@ import {
   BIP32API,
   BIP32Interface,
 } from 'bip32';
+import type { Transaction } from 'bitcoinjs-lib';
 import {
   Network,
   networks,
@@ -15,6 +16,7 @@ import {
   ECPairInterface,
 } from 'ecpair';
 import {
+  Address,
   BIP39API,
   CreateTransactionInput,
   WalletPrivateData,
@@ -25,10 +27,9 @@ import {
   IAddressDto,
   TransactionErrorsEnum,
 } from '@kitzen/data-transfer-objects';
-import type { Transaction } from 'bitcoinjs-lib';
+import { validate } from 'bitcoin-address-validation';
 
-export class Btc {
-
+export class Btc   {
   public constructor(
     private ecPair: ECPairAPI,
     private bip32: BIP32API,
@@ -42,10 +43,10 @@ export class Btc {
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
-    const addressReceive: any = [];
-    const addressChange: any = [];
+    const addressReceive: Address[] = [];
+    const addressChange: Address[] = [];
 
-    let bip32Interface = wallet.derivePath('m/44\'/195\'/0\'/0/0');
+    let bip32Interface = wallet.derivePath("m/44'/195'/0'/0/0");
     const privateKeyHex = bip32Interface.privateKey!.toString('hex');
 
     for (let i = 0; i < addressAmount; i++) {
@@ -76,43 +77,6 @@ export class Btc {
     };
   }
 
-  //
-  // public generatePublicKey(): { publicKey: string, derivationPath: string} {
-  //   const xpriv = State.getStateByKey(StateKeys.X_PRIV);
-  //
-  //   const randomIndex: number = getRandomDerivationIndex();
-  //   const derivationPath = `m/84'/0'/0'/0/${randomIndex}`;
-  //
-  //   const wif = this.bip32
-  //     .fromBase58(xpriv, networks.bitcoin)
-  //     .derivePath(derivationPath)
-  //     .toWIF();
-  //
-  //   const keyPair: ECPairInterface = this.ecPair.fromWIF(wif);
-  //
-  //   return { publicKey: keyPair!.publicKey.toString('hex'), derivationPath };
-  // }
-  //
-  // public getZPub(): string {
-  //   const xpriv = State.getStateByKey(StateKeys.X_PRIV);
-  //
-  //   const xpub = this.bip32
-  //     .fromBase58(xpriv, networks.bitcoin)
-  //     .derivePath("m/84'/0'/0'")
-  //     .neutered()
-  //     .toBase58();
-  //
-  //   return convertXpub(xpub, ConvertPubKeysPrefixes.zPub);
-  // }
-  //
-  // public getEcpair(path: string = DEFAULT_PATH): ECPairInterface {
-  //   const xpriv = State.getStateByKey(StateKeys.X_PRIV);
-  //
-  //   const wif = this.bip32.fromBase58(xpriv, networks.bitcoin).derivePath(path).toWIF();
-  //
-  //   return this.ecPair.fromWIF(wif);
-  // }
-  //
   public signMessage(message: string, derivePath: string, privateKeyBase58: string): string {
     const wif = this.bip32.fromBase58(privateKeyBase58, networks.bitcoin).derivePath(derivePath).toWIF();
     const keyPair = this.ecPair.fromWIF(wif);
@@ -143,6 +107,10 @@ export class Btc {
     // Then we create and return a real transaction here
     // of course there's a chance that fee would be different and virtualSize as well, but it's small.
     return this.createTransaction({ ...params, fee }).virtualSize();
+  }
+
+  public validateAddress(address: string): boolean {
+    return validate(address);
   }
 
   public createTransaction(params: Omit<CreateTransactionInput, 'pricePerByte'>): Transaction {
@@ -218,35 +186,5 @@ export class Btc {
 
     return transaction.extractTransaction();
   }
-
-
-  //
-  // public async signTransaction(psbtBase64: string, derivationPath: string): Promise<string> {
-  //   const seed: null | Buffer = State.getSeed();
-  //
-  //   const psbt: Psbt = Psbt.fromBase64(psbtBase64);
-  //
-  //   const hdRoot: BIP32Interface = this.bip32.fromSeed(seed);
-  //
-  //   const systemDerivation: IBip32Derivation = await getDerivation({ hdRoot }, derivationPath);
-  //
-  //   return psbt
-  //     .updateInput(0, { bip32Derivation: [systemDerivation] })
-  //     .signInputHD(0, hdRoot)
-  //     .toBase64();
-  // }
-  //
-  // public getPsbtOutput(psbtBase64: string): any {
-  //   const psbt: Psbt = Psbt.fromBase64(psbtBase64);
-  //
-  //   const outputs = psbt.txOutputs;
-  //
-  //   return outputs.map(output => {
-  //     return {
-  //       address: output.address,
-  //       amount: output.value,
-  //     }
-  //   })
-  // }
 }
 
