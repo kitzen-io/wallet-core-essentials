@@ -42,16 +42,12 @@ export interface CreateTrxTransactionParams {
   to: string;
   from: string;
   blockInfo: ITronGetBlockResponse;
+  feeLimit: number;
 }
 
-export interface CreateSmartContractTransactionParams {
-  amount: string;
-  to: string;
-  from: string;
+export interface CreateSmartContractTransactionParams extends CreateTrxTransactionParams {
   contractAddress: string;
-  blockInfo: ITronGetBlockResponse;
 }
-
 
 
 export interface EstimateTransactionFeeProps {

@@ -32,6 +32,7 @@ describe('trx', () => {
       to: "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
       amount: "1119916",
       blockInfo,
+      feeLimit: 10_000_000,
     });
     let res2 = trx.signTransaction(result, privateKeyHex)
     expect(res2).toStrictEqual(createTrxTransactionRes);
@@ -74,6 +75,7 @@ describe('trx', () => {
       "from": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
       contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", // https://tronscan.io/#/token20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t
       blockInfo,
+      feeLimit: 10_000_000,
     });
      let res2 = trx.signTransaction(result, privateKeyHex)
     expect(res2).toStrictEqual(createTrc20Res);

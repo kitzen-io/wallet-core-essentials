@@ -89,6 +89,7 @@ export class Tron {
       amount: parameters.amount,
       to: parameters.to,
       blockInfo: this.dummyBlockInfo,
+      feeLimit: 100_000_000, // this can be any number due estimation
     });
     const transactionHex = this.signTransaction(transaction, parameters.privateKeyHex);
     // const availableEnergy = parameters.accountResources.TotalEnergyLimit - parameters.accountResources.TotalEnergyWeight;
@@ -115,7 +116,12 @@ export class Tron {
     // pack(binary, 'package.message')
     parameter.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
 
-    return this.packTransactionContract(parameter, args.blockInfo, Transaction.Contract.ContractType.TRANSFERCONTRACT);
+    return this.packTransactionContract(
+      parameter,
+      args.blockInfo,
+      Transaction.Contract.ContractType.TRANSFERCONTRACT,
+      args.feeLimit,
+    );
   }
 
   public createTrc20Transaction(args: CreateSmartContractTransactionParams): any {
@@ -134,7 +140,12 @@ export class Tron {
     const parameter = new Any();
     // pack(binary, 'package.Class')
     parameter.pack(smartContract.serializeBinary(), 'protocol.TriggerSmartContract');
-    return this.packTransactionContract(parameter, args.blockInfo, Transaction.Contract.ContractType.TRIGGERSMARTCONTRACT);
+    return this.packTransactionContract(
+      parameter,
+      args.blockInfo,
+      Transaction.Contract.ContractType.TRIGGERSMARTCONTRACT,
+      args.feeLimit,
+    );
   }
 
   public signTransaction(transaction: any, privateKey: string): string {
@@ -164,7 +175,7 @@ export class Tron {
     return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
   }
 
-  private addRefBlockToTransaction(data: ITronGetBlockResponse, rawTransaction): void {
+  private addRefBlockToTransaction(data: ITronGetBlockResponse, rawTransaction, feeLimit: number): void {
     // get Hex representation of a number with toString(16)
     // and get last 4 bytes, if there are fewer bytes - fill left bytes with 0
 
@@ -176,10 +187,10 @@ export class Tron {
     // 1 minute by protocol
     rawTransaction.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // int64 expiration = 8;
     rawTransaction.setTimestamp(data.block_header.raw_data.timestamp); // int64 timestamp = 14;
-    rawTransaction.setFeeLimit(10_000_000); // TODO
+    rawTransaction.setFeeLimit(feeLimit);
   }
 
-  private packTransactionContract(parameter: Any, blockInfo: ITronGetBlockResponse, contractType: number): any {
+  private packTransactionContract(parameter: Any, blockInfo: ITronGetBlockResponse, contractType: number, feeLimit: number): any {
     // message protocol.Transaction.Contract
     const contract = new Transaction.Contract();
     contract.setType(contractType);
@@ -188,7 +199,7 @@ export class Tron {
     // message protocol.Transaction.raw
     const transactionRaw = new Transaction.raw();
     transactionRaw.addContract(contract);
-    this.addRefBlockToTransaction(blockInfo, transactionRaw);
+    this.addRefBlockToTransaction(blockInfo, transactionRaw, feeLimit);
 
     // message protocol.Transaction
     const transaction = new Transaction();
