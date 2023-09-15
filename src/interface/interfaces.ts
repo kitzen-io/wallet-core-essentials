@@ -38,19 +38,13 @@ export interface CreateTransactionInput {
 
 
 export interface CreateTrxTransactionParams {
-  // Proto format uses int,
-  // js max safe integer is 9007199254740992 trx satoshi, which is more than 500M $ if 13'000'000 trx = 1$
-  // this should be sufficient to mark Js Number to cover all transactions costs
-  amount: number;
+  amount: string;
   to: string;
   from: string;
   blockInfo: ITronGetBlockResponse;
 }
 
 export interface CreateSmartContractTransactionParams {
-  // Proto format uses int,
-  // js max safe integer is 9007199254740992 trx satoshi, which is more than 500M $ if 13'000'000 trx = 1$
-  // this should be sufficient to mark Js Number to cover all transactions costs
   amount: string;
   to: string;
   from: string;
@@ -64,7 +58,7 @@ export interface EstimateTransactionFeeProps {
   accountResources: ITronGetAccountResourcesResponse;
   from: string;
   to: string;
-  amount: number;
+  amount: string;
   privateKeyHex: string;
 }
 

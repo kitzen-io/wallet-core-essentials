@@ -115,7 +115,7 @@ export class Tron {
     // pack(binary, 'package.message')
     parameter.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
 
-    this.packTransactionContract(parameter, args.blockInfo, Transaction.Contract.ContractType.TRANSFERCONTRACT);
+    return this.packTransactionContract(parameter, args.blockInfo, Transaction.Contract.ContractType.TRANSFERCONTRACT);
   }
 
   public createTrc20Transaction(args: CreateSmartContractTransactionParams): any {

@@ -30,7 +30,7 @@ describe('trx', () => {
     let result = trx.createTrxTransaction({
       from: "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
       to: "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
-      amount: 1119916,
+      amount: "1119916",
       blockInfo,
     });
     let res2 = trx.signTransaction(result, privateKeyHex)
@@ -85,7 +85,7 @@ describe('trx', () => {
     // this is non-existing wallet private key and id
     expect(trx.estimateTransactionFee({
       "to": "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
-      "amount": 130107,
+      "amount": "130107",
       "from": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
       "privateKeyHex": privateKeyHex,
       "accountResources": {
