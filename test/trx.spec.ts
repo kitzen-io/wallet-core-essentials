@@ -46,9 +46,36 @@ describe('trx', () => {
 
   test('base58toHex', () => {
     let trx = new Tron();
+    // owner address
+    expect(trx.base58toHex('TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht')).toEqual('417A8649ABFA3D24F8D0DC70D2B6D50E4F8A6F7613');
+  });
+
+  test('base58toHex should transform usdt contract address correctly according to protobuf', () => {
+    let trx = new Tron();
+    // contract address
+    expect(trx.base58toHex('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t')).toEqual('41A614F803B6FD780986A42C78EC9C7F77E6DED13C');
+  });
+
+  test('base58toHex receiver address', () => {
+    let trx = new Tron();
+    // contract address
+    expect(trx.base58toHex('TCXFzBg8XjZF2NUjDSzSxXLBxeZxgPpS5o')).toEqual('411C000DD56B9E634FE67346B89045990CB7BB821D');
+  });
+
+  test('createSmartContract', () => {
+    let trx = new Tron();
     // don't be too happy :)
     // this is non-existing wallet private key and id
-    expect(trx.base58toHex('TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht')).toEqual('417A8649ABFA3D24F8D0DC70D2B6D50E4F8A6F7613');
+
+    let result = trx.createTrc20Transaction({
+      "to": "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
+      "amount": 130107,
+      "from": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
+      contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", // https://tronscan.io/#/token20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t
+      blockInfo,
+    });
+     let res2 = trx.signTransaction(result, privateKeyHex)
+    expect(res2).toStrictEqual(createTrxTransactionRes);
   });
 
 

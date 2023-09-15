@@ -5,6 +5,7 @@ import {
 } from '@tronscan/client/src/utils/crypto';
 import {
   Address,
+  CreateSmartContractTransactionParams,
   CreateTrxTransactionParams,
   EstimateTransactionFeeProps,
 } from '../interface/interfaces';
@@ -12,8 +13,12 @@ import { byteArray2hexStr } from '@tronscan/client/src/utils/bytes';
 
 import { Any } from 'google-protobuf/google/protobuf/any_pb.js';
 import { TransferContract } from '@tronscan/client/src/protocol/core/Contract_pb';
-import { Transaction } from '@tronscan/client/src/protocol/core/Tron_pb';
 import {
+  SmartContract,
+  Transaction,
+} from '@tronscan/client/src/protocol/core/Tron_pb';
+import {
+  AbiCoder,
   concat,
   keccak256,
   Signature,
@@ -100,21 +105,38 @@ export class Tron {
     transferContract.setOwnerAddress(Uint8Array.from(decode58Check(args.from)));
     transferContract.setAmount(args.amount);
 
-    const protoBufTransferContract = new Any();
+    const parameter = new Any();
     // node_modules/@tronscan/client/protobuf/core/Tron.proto
     // pack(binary, 'package.message')
-    protoBufTransferContract.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
-    const contract = new Transaction.Contract();
-    contract.setType(Transaction.Contract.ContractType.TRANSFERCONTRACT);
-    contract.setParameter(protoBufTransferContract);
+    parameter.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
 
-    const transactionRaw = new Transaction.raw();
-    transactionRaw.addContract(contract);
-    this.addRefBlockToTransaction(args.blockInfo, transactionRaw);
-    const transaction = new Transaction();
-    transaction.setRawData(transactionRaw);
-    return transaction;
+    this.packTransactionContract(parameter, args.blockInfo, Transaction.Contract.ContractType.TRANSFERCONTRACT);
   }
+
+  public createTrc20Transaction(args: CreateSmartContractTransactionParams): any {
+    // To understand the magic that goes here, you have to carefuly read Tron protocol documentation in
+    // https://github.com/tronprotocol/documentation-en/blob/master/docs/contracts/trc20.md
+    // as well as Protobuf structure in node_modules/@tronscan/client/protobuf/core/Tron.proto
+
+    // We want to call Trc20 Smart Contract function transfer(address _to, uint _value) returns (bool success);
+    const smartContract = new SmartContract();
+    smartContract.setOriginAddress(Uint8Array.from(decode58Check(args.from)));
+
+    let functionName = keccak256(Buffer.from('transfer(address,uint256)', 'utf-8')).toString().substring(2, 10);
+    // we intentionally drop first T from address since the protocol works this way
+    // address hex should be 40 length
+    let toAddress = this.base58toHex(args.to).substring(2);
+    let functionParams = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [toAddress, args.amount]);
+    let data = functionName + functionParams;
+    smartContract.setBytecode(data);
+    smartContract.setContractAddress(Uint8Array.from(decode58Check(args.contractAddress)));
+    // google.protobuf.Any parameter = 2;
+    const parameter = new Any();
+    // pack(binary, 'package.Class')
+    parameter.pack(smartContract.serializeBinary(), 'protocol.TriggerSmartContract');
+    return this.packTransactionContract(parameter, args.blockInfo, Transaction.Contract.ContractType.TRIGGERSMARTCONTRACT);
+  }
+
 
   public signTransaction(transaction: any, privateKey: string): string {
     let a = signTransaction(privateKey, transaction);
@@ -151,12 +173,29 @@ export class Tron {
     // https://github.com/kitzen-io/tronweb/blob/180e87e6b580d2ce2b00d2eea2d966a808d94657/src/lib/transactionBuilder.js#L80
     //
     let hexRefBlockEnd = data.block_header.raw_data.number.toString(16).slice(-4).padStart(4, '0');
+    rawTransaction.setRefBlockBytes(this.hexToUnsignedIntArray(hexRefBlockEnd)); // bytes ref_block_bytes = 1;
+    rawTransaction.setRefBlockHash(this.hexToUnsignedIntArray(data.blockID.slice(16, 32))); // bytes ref_block_hash = 4;
+    // 1 minute by protocol
+    rawTransaction.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // int64 expiration = 8;
+    rawTransaction.setTimestamp(data.block_header.raw_data.timestamp); // int64 timestamp = 14;
+    rawTransaction.setFeeLimit(10_000_000); // TODO
+  }
 
-    rawTransaction.setRefBlockBytes(this.hexToUnsignedIntArray(hexRefBlockEnd)); // Set refBlockBytes using block number
-    rawTransaction.setRefBlockHash(this.hexToUnsignedIntArray(data.blockID.slice(16, 32))); // Set refBlockBytes using block number
-    // 1 minute should be enough to finish transaction
-    rawTransaction.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // Set refBlockBytes using block number
-    rawTransaction.setTimestamp(data.block_header.raw_data.timestamp); // Set refBlockBytes using block number
+  private packTransactionContract(parameter: Any, blockInfo: ITronGetBlockResponse, contractType: number): any {
+    // message protocol.Transaction.Contract
+    const contract = new Transaction.Contract();
+    contract.setType(contractType);
+    contract.setParameter(parameter);
+
+    // message protocol.Transaction.raw
+    const transactionRaw = new Transaction.raw();
+    transactionRaw.addContract(contract);
+    this.addRefBlockToTransaction(blockInfo, transactionRaw);
+
+    // message protocol.Transaction
+    const transaction = new Transaction();
+    transaction.setRawData(transactionRaw);
+    return transaction;
   }
 }
 
