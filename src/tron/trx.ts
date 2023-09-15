@@ -51,6 +51,11 @@ export class Tron {
     },
   };
 
+  private hexToUnit8(hexString: string): Uint8Array {
+    let pairs = hexString.match(/.{1,2}/g)!; // break down to pairs of 2
+    return Uint8Array.from(pairs.map((byte) => parseInt(byte, 16)));
+  }
+
 
   public getAddressFromPrivateKey(privateKeyHex: string): Address[] {
     let address = pkToAddress(privateKeyHex);
@@ -122,12 +127,7 @@ export class Tron {
     const smartContract = new SmartContract();
     smartContract.setOriginAddress(Uint8Array.from(decode58Check(args.from)));
 
-    let functionName = keccak256(Buffer.from('transfer(address,uint256)', 'utf-8')).toString().substring(2, 10);
-    // we intentionally drop first T from address since the protocol works this way
-    // address hex should be 40 length
-    let toAddress = this.base58toHex(args.to).substring(2);
-    let functionParams = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [toAddress, args.amount]);
-    let data = functionName + functionParams;
+    const data = this.encodeSmartContractBytecode(args.to, args.amount);
     smartContract.setBytecode(data);
     smartContract.setContractAddress(Uint8Array.from(decode58Check(args.contractAddress)));
     // google.protobuf.Any parameter = 2;
@@ -136,7 +136,6 @@ export class Tron {
     parameter.pack(smartContract.serializeBinary(), 'protocol.TriggerSmartContract');
     return this.packTransactionContract(parameter, args.blockInfo, Transaction.Contract.ContractType.TRIGGERSMARTCONTRACT);
   }
-
 
   public signTransaction(transaction: any, privateKey: string): string {
     let a = signTransaction(privateKey, transaction);
@@ -171,7 +170,6 @@ export class Tron {
 
     // this part is partially from TronWeb
     // https://github.com/kitzen-io/tronweb/blob/180e87e6b580d2ce2b00d2eea2d966a808d94657/src/lib/transactionBuilder.js#L80
-    //
     let hexRefBlockEnd = data.block_header.raw_data.number.toString(16).slice(-4).padStart(4, '0');
     rawTransaction.setRefBlockBytes(this.hexToUnsignedIntArray(hexRefBlockEnd)); // bytes ref_block_bytes = 1;
     rawTransaction.setRefBlockHash(this.hexToUnsignedIntArray(data.blockID.slice(16, 32))); // bytes ref_block_hash = 4;
@@ -196,6 +194,33 @@ export class Tron {
     const transaction = new Transaction();
     transaction.setRawData(transactionRaw);
     return transaction;
+  }
+
+  /*
+  * Encodes node_modules/@tronscan/client/protobuf/core/Tron.proto
+  * message SmartContract {
+  *    bytes bytecode = 4;
+  * }
+  * */
+  private encodeSmartContractBytecode(to: string, amount: string): Uint8Array {
+    // according to doc https://github.com/tronprotocol/documentation-en/blob/master/docs/contracts/trc20.md
+    // function transfer(address _to, uint _value) returns (bool success);
+    let functionName = keccak256(Buffer.from('transfer(address,uint256)', 'utf-8')).toString().substring(2, 10);
+    let toAddress = this.base58toHex(to);
+    if (!toAddress.startsWith('41')) { // first T is always a T
+      throw Error('invalid address');
+    }
+    // we intentionally drop first T from address since the protocol works this way
+    // address hex should be 40 length
+    toAddress = toAddress.substring(2);
+
+    let functionParams = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [toAddress, amount]);
+    if (!functionParams.startsWith('0x')) { // abi always returns prefix hex 0x
+      throw Error('Invalid Abi encoded result');
+    }
+    // we need to remove it so result is only hex
+    functionParams = functionParams.substring(2);
+    return this.hexToUnit8(functionName + functionParams);
   }
 }
 

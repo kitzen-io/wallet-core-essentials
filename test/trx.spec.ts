@@ -1,6 +1,7 @@
 import { Tron } from '../src/tron/trx';
 import * as blockInfo from './fixtures/blokc-info-response.json';
 import {
+  createTrc20Res,
   createTrxTransactionRes,
   privateKeyHex
 } from './fixtures/consts';
@@ -68,16 +69,15 @@ describe('trx', () => {
     // this is non-existing wallet private key and id
 
     let result = trx.createTrc20Transaction({
-      "to": "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
-      "amount": 130107,
+      "to": "TCXFzBg8XjZF2NUjDSzSxXLBxeZxgPpS5o",
+      "amount": "1000000",
       "from": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
       contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", // https://tronscan.io/#/token20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t
       blockInfo,
     });
      let res2 = trx.signTransaction(result, privateKeyHex)
-    expect(res2).toStrictEqual(createTrxTransactionRes);
+    expect(res2).toStrictEqual(createTrc20Res);
   });
-
 
   test('estimateTransactionFee', () => {
     let trx = new Tron();
