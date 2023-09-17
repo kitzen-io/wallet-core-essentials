@@ -55,6 +55,7 @@
     "@kitzen/assets": "*"
   },
   "devDependencies": {
+    "tronweb": "^5.3.0",
     "@kitzen/assets": "^1.0.13",
     "@types/create-hmac": "^1.1.0",
     "@types/google-protobuf": "^3.15.6",

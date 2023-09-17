@@ -27,7 +27,7 @@ describe('trx', () => {
     let trx = new Tron();
     // don't be too happy :)
     // this is non-existing wallet private key and id
-    let result = trx.createTrxTransaction({
+    let result = trx.createTrc10Transaction({
       from: "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
       to: "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
       amount: "1119916",

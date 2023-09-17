@@ -5,7 +5,8 @@ import {
 } from '@tronscan/client/src/utils/crypto';
 import {
   Address,
-  CreateSmartContractTransactionParams,
+  CreateTrc10TransactionParams,
+  CreateTrc20TransactionParams,
   CreateTrxTransactionParams,
   EstimateTransactionFeeProps,
 } from '../interface/interfaces';
@@ -25,7 +26,10 @@ import {
   SigningKey,
   toUtf8Bytes,
 } from 'ethers';
-import { ITronGetBlockResponse } from '@kitzen/data-transfer-objects';
+import {
+  BlockchainNetworkEnum,
+  ITronGetBlockResponse
+} from '@kitzen/data-transfer-objects';
 
 
 export class Tron {
@@ -84,7 +88,7 @@ export class Tron {
   }
 
   public estimateTransactionFee({ accountResources, ...parameters }: EstimateTransactionFeeProps): number {
-    let transaction = this.createTrxTransaction({
+    let transaction = this.createTrc10Transaction({
       from: parameters.from,
       amount: parameters.amount,
       to: parameters.to,
@@ -102,7 +106,7 @@ export class Tron {
     return paidBandwidth * 1000;
   }
 
-  public createTrxTransaction(args: CreateTrxTransactionParams): any {
+  public createTrc10Transaction(args: CreateTrc10TransactionParams): any {
     // this method will create a transaction with required fields on Tron network
     // example of required fields can be checked in TronAPI
     // https://developers.tron.network/reference/broadcasttransaction
@@ -124,7 +128,17 @@ export class Tron {
     );
   }
 
-  public createTrc20Transaction(args: CreateSmartContractTransactionParams): any {
+  public createTrxTransaction(args: CreateTrxTransactionParams): any {
+    if (args.network == BlockchainNetworkEnum.TRC20 && args.contractAddress) {
+      return this.createTrc20Transaction(args as CreateTrc20TransactionParams);
+    } else if (args.network === BlockchainNetworkEnum.TRC10) {
+      return this.createTrc10Transaction(args);
+    } else {
+      throw Error(`Unsupported network ${args.network}`);
+    }
+  }
+
+  public createTrc20Transaction(args: CreateTrc20TransactionParams): any {
     // To understand the magic that goes here, you have to carefuly read Tron protocol documentation in
     // https://github.com/tronprotocol/documentation-en/blob/master/docs/contracts/trc20.md
     // as well as Protobuf structure in node_modules/@tronscan/client/protobuf/core/Tron.proto
@@ -208,11 +222,11 @@ export class Tron {
   }
 
   /*
-  * Encodes node_modules/@tronscan/client/protobuf/core/Tron.proto
-  * message SmartContract {
-  *    bytes bytecode = 4;
-  * }
-  * */
+   * Encodes node_modules/@tronscan/client/protobuf/core/Tron.proto
+   * message SmartContract {
+   *    bytes bytecode = 4;
+   * }
+   * */
   private encodeSmartContractBytecode(to: string, amount: string): Uint8Array {
     // according to doc https://github.com/tronprotocol/documentation-en/blob/master/docs/contracts/trc20.md
     // function transfer(address _to, uint _value) returns (bool success);

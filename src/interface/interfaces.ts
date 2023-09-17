@@ -1,4 +1,5 @@
 import {
+  BlockchainNetworkEnum,
   IAddressDto,
   ITronGetAccountResourcesResponse,
   ITronGetBlockResponse,
@@ -37,7 +38,7 @@ export interface CreateTransactionInput {
 }
 
 
-export interface CreateTrxTransactionParams {
+export interface CreateTrc10TransactionParams {
   amount: string;
   to: string;
   from: string;
@@ -45,8 +46,13 @@ export interface CreateTrxTransactionParams {
   feeLimit: number;
 }
 
-export interface CreateSmartContractTransactionParams extends CreateTrxTransactionParams {
+export interface CreateTrc20TransactionParams extends CreateTrc10TransactionParams {
   contractAddress: string;
+}
+
+export interface CreateTrxTransactionParams extends CreateTrc10TransactionParams {
+  contractAddress?: string;
+  network: BlockchainNetworkEnum;
 }
 
 
