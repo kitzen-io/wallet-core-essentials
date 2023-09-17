@@ -17,16 +17,12 @@ describe('trx', () => {
 
   test('getAddressFromPrivateKey', () => {
     let trx = new Tron();
-    // don't be too happy :)
-    // this is non-existing wallet private key and id
-    let result = trx.getAddressFromPrivateKey('1d742c9a796aba395b9482717c5e539dc3c64becf9f3a8795277f16209a150af');
+    let result = trx.getAddressFromPrivateKey(privateKeyHex);
     expect(result).toStrictEqual([{ address: 'TDRb4GFiWU3dG5uxcx5kveszvcMagB8Vuu', derivePath: "m/84'/0'/0'/0/0" }]);
   });
 
   test('createTrxTransaction', () => {
     let trx = new Tron();
-    // don't be too happy :)
-    // this is non-existing wallet private key and id
     let result = trx.createTrc10Transaction({
       from: "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
       to: "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
@@ -40,8 +36,6 @@ describe('trx', () => {
 
   test('validateAddress', () => {
     let trx = new Tron();
-    // don't be too happy :)
-    // this is non-existing wallet private key and id
     expect(trx.validateAddress('TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht')).toEqual(true)
     expect(trx.validateAddress('TM94JwXLN33Gw4L8KF1eBPaEEPcdQ06hht')).toEqual(false);
   });
@@ -66,9 +60,6 @@ describe('trx', () => {
 
   test('createSmartContract', () => {
     let trx = new Tron();
-    // don't be too happy :)
-    // this is non-existing wallet private key and id
-
     let result = trx.createTrc20Transaction({
       "to": "TCXFzBg8XjZF2NUjDSzSxXLBxeZxgPpS5o",
       "amount": "1000000",
@@ -83,8 +74,6 @@ describe('trx', () => {
 
   test('estimateTransactionFee', () => {
     let trx = new Tron();
-    // don't be too happy :)
-    // this is non-existing wallet private key and id
     expect(trx.estimateTransactionFee({
       "to": "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
       "amount": "130107",
