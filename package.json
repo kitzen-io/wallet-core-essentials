@@ -39,7 +39,7 @@
     "@kitzen/data-transfer-objects": "^1.0.41",
     "@noble/secp256k1": "1.6.3",
     "@tronscan/client": "^0.2.81",
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "bip32": "3.0.1",
     "bitcoin-address-validation": "^2.2.3",
     "bitcoinjs-lib": "^6.1.3",
