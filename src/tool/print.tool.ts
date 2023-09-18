@@ -35,7 +35,7 @@ export class PrintTool {
   }
 
   public printCrypto(num: number, network: BlockchainNetworkEnum, identifier: string = 'coin'): string {
-    if (!num || !network || !identifier) {
+    if (num == undefined || !network || !identifier) {
       return '?';
     }
     const coinSymbol = this.assetsInfo[network][identifier].symbol;
