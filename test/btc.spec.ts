@@ -5,7 +5,7 @@ import {
 } from "bip39";
 import walletPrivateData from './fixtures/wallet-private-data.json'
 import signTransactionInput from './fixtures/sign-transaction-input.json'
-import { privateKeyBase58 } from 'test/fixtures/consts';
+import { privateKeyBase58 } from './fixtures/consts';
 
 describe('btc', () => {
   beforeAll(() => {
