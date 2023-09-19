@@ -59,6 +59,23 @@ describe('trx', () => {
     expect(trx.base58toHex('TCXFzBg8XjZF2NUjDSzSxXLBxeZxgPpS5o')).toEqual('411C000DD56B9E634FE67346B89045990CB7BB821D');
   });
 
+  test('hexToBase58 receiver address', () => {
+    let trx = new Tron();
+    // contract address
+    expect(trx.hexToBase58('411C000DD56B9E634FE67346B89045990CB7BB821D')).toEqual('TCXFzBg8XjZF2NUjDSzSxXLBxeZxgPpS5o');
+  });
+
+  test('decode smart contract param', () => {
+    let trx = new Tron();
+    // contract address
+    expect(trx.decodeContractData({
+      amount: 1000000,
+      to_address: '411C000DD56B9E634FE67346B89045990CB7BB821D',
+      owner_address: '417A8649ABFA3D24F8D0DC70D2B6D50E4F8A6F7613',
+      data: 'a9059cbb0000000000000000000000001c000dd56b9e634fe67346b89045990cb7bb821d00000000000000000000000000000000000000000000000000000000000f4240'
+    })).toEqual({"amount": BigInt(1000000), "fromAddress": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht", "toAddress": "TCXFzBg8XjZF2NUjDSzSxXLBxeZxgPpS5o"});
+  });
+
   test('createSmartContract', () => {
     let trx = new Tron();
     let result = trx.createTrc20Transaction({
@@ -80,7 +97,10 @@ describe('trx', () => {
       "amount": "130107",
       "from": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
       network: BlockchainNetworkEnum.TRC10,
-      "privateKeyHex": privateKeyHex,
+      feeLimit: 100_000_000,
+      bandwidthPrice: 0,
+      energyNeeded: 0,
+      energyPrice: 0,
       "accountResources": {
         "freeNetLimit": 600,
         "assetNetUsed": [

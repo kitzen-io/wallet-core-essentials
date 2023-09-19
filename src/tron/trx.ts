@@ -1,5 +1,7 @@
 import {
   decode58Check,
+  getBase58CheckAddress,
+  isAddressValid,
   pkToAddress,
   signTransaction,
 } from '@tronscan/client/src/utils/crypto';
@@ -8,11 +10,17 @@ import {
   CreateTrc10TransactionParams,
   CreateTrc20TransactionParams,
   CreateTrxTransactionParams,
+  DecodeContractDataParam,
+  DecodeContractDataResult,
   EstimateTransactionFeeProps,
   GetTriggerConstantContractParams,
   GetTriggerConstantContractResponse,
 } from '../interface/interfaces';
 import { byteArray2hexStr } from '@tronscan/client/src/utils/bytes';
+import {
+  BlockchainNetworkEnum,
+  ITronGetBlockResponse,
+} from '@kitzen/data-transfer-objects';
 
 import { Any } from 'google-protobuf/google/protobuf/any_pb.js';
 import { TransferContract } from '@tronscan/client/src/protocol/core/Contract_pb';
@@ -28,18 +36,11 @@ import {
   SigningKey,
   toUtf8Bytes,
 } from 'ethers';
-import {
-  BlockchainNetworkEnum,
-  ITronGetBlockResponse
-} from '@kitzen/data-transfer-objects';
 
 
 export class Tron {
 
-  // Tron address is 34 characters length, starting with T
-  // https://datatracker.ietf.org/doc/id/draft-msporny-base58-02.txt
-  // this is base58 base characters, no l, 0, O, etc
-  private addressRegex = /T[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{33}/;
+  private static ADDRESS_PREFIX = '41';
 
   // this one is used for calculation transaction fee
   private dummyBlockInfo: ITronGetBlockResponse = {
@@ -57,9 +58,49 @@ export class Tron {
     },
   };
 
-  private hexToUnit8(hexString: string): Uint8Array {
-    let pairs = hexString.match(/.{1,2}/g)!; // break down to pairs of 2
-    return Uint8Array.from(pairs.map((byte) => parseInt(byte, 16)));
+
+  public hexToBase58(value: string): string {
+    return getBase58CheckAddress(this.hexToByteArray(value));
+  }
+
+  public decodeContractData(value: DecodeContractDataParam): DecodeContractDataResult {
+    if (!value.data) {
+      return {
+        fromAddress: this.hexToBase58(value.owner_address),
+        amount: BigInt(value.amount),
+        toAddress: this.hexToBase58(value.to_address),
+      };
+    }
+    const decodedParams = this.decodeParams(['address', 'uint256'], value.data, true);
+    return {
+      fromAddress: this.hexToBase58(value.owner_address),
+      toAddress: this.hexToBase58(decodedParams[0]),
+      amount: decodedParams[1],
+    };
+  }
+
+  private decodeParams(types, output, ignoreMethodHash): any[] {
+    if (!output || typeof output === 'boolean') {
+      ignoreMethodHash = output;
+      output = types;
+    }
+
+    if (ignoreMethodHash && output.replace(/^0x/, '').length % 64 === 8) {
+      output = `0x${output.replace(/^0x/, '').substring(8)}`;
+    }
+
+    const abiCoder = new AbiCoder();
+
+    if (output.replace(/^0x/, '').length % 64) {
+      throw new Error('The encoded string is not valid. Its length must be a multiple of 64.');
+    }
+    return abiCoder.decode(types, output).reduce((obj, arg, index) => {
+      if (types[index] === 'address') {
+        arg = Tron.ADDRESS_PREFIX + arg.substr(2).toLowerCase();
+      }
+      obj.push(arg);
+      return obj;
+    }, []);
   }
 
 
@@ -74,7 +115,7 @@ export class Tron {
   }
 
   public validateAddress(address: string): boolean {
-    return this.addressRegex.test(address);
+    return isAddressValid(address);
   }
 
   public signMessage(message: string, privateKeyHex: string): string {
@@ -263,7 +304,7 @@ export class Tron {
 
   private encodeSmartContractParams(to: string, amount: string): string {
     let toAddress = this.base58toHex(to);
-    if (!toAddress.startsWith('41')) { // first T is always a T
+    if (!toAddress.startsWith(Tron.ADDRESS_PREFIX)) { // first T is always a T
       throw Error('invalid address');
     }
     // we intentionally drop first T from address since the protocol works this way
@@ -276,6 +317,15 @@ export class Tron {
     }
     // we need to remove it so result is only hex
     return functionParams.substring(2);
+  }
+
+  private hexToUnit8(hexString: string): Uint8Array {
+    return Uint8Array.from(this.hexToByteArray(hexString));
+  }
+
+  private hexToByteArray(hexString: string): number[] {
+    let pairs = hexString.match(/.{1,2}/g)!; // break down to pairs of 2
+    return pairs.map((byte) => parseInt(byte, 16));
   }
 }
 

@@ -63,6 +63,19 @@ export interface GetTriggerConstantContractParams {
   amount: string;
 }
 
+export interface DecodeContractDataResult {
+  fromAddress: string;
+  toAddress: string;
+  amount: bigint;
+}
+
+export interface DecodeContractDataParam {
+  amount: number;
+  owner_address: string;
+  to_address: string;
+  data?: string;
+}
+
 export interface GetTriggerConstantContractResponse {
   owner_address: string;
   contract_address: string;
