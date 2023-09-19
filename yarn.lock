@@ -760,11 +760,10 @@
   resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.13.tgz#4c835f5ad94d1c63e9b6797a7f15e1c10d6e151f"
   integrity sha512-5NmMFkn6bmUQd2SoWloO/Mm6PuJW/rXQpV5y0ng3jt6hNdltvT7OhUEGYtBKiq6GkCfknerW9xcuMJ1pByrcRA==
 
-"@kitzen/data-transfer-objects@/home/andrew/it/tony-crypto/frontend/api-dto":
-  version "1.0.46"
-
-"@kitzen/data-transfer-objects@file:../api-dto":
-  version "1.0.46"
+"@kitzen/data-transfer-objects@^1.0.47":
+  version "1.0.47"
+  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.47.tgz#4e9a03dff887b0c289d23345d163bdf7ff9d3453"
+  integrity sha512-504tE7JjenyvvMjeTtBRvURAbILYcWSPE92yqI2lKtsKJP21WvhSQ525kdHTxKSh6aulGi/QeS+3KbM1N0sDwA==
 
 "@noble/curves@1.1.0", "@noble/curves@~1.1.0":
   version "1.1.0"
