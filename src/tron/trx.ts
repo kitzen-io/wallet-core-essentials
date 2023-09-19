@@ -1,34 +1,46 @@
 import {
   decode58Check,
+  getBase58CheckAddress,
+  isAddressValid,
   pkToAddress,
   signTransaction,
 } from '@tronscan/client/src/utils/crypto';
 import {
   Address,
+  CreateTrc10TransactionParams,
+  CreateTrc20TransactionParams,
   CreateTrxTransactionParams,
+  DecodeContractDataParam,
+  DecodeContractDataResult,
   EstimateTransactionFeeProps,
+  GetTriggerConstantContractParams,
+  GetTriggerConstantContractResponse,
 } from '../interface/interfaces';
 import { byteArray2hexStr } from '@tronscan/client/src/utils/bytes';
+import {
+  BlockchainNetworkEnum,
+  ITronGetBlockResponse,
+} from '@kitzen/data-transfer-objects';
 
 import { Any } from 'google-protobuf/google/protobuf/any_pb.js';
 import { TransferContract } from '@tronscan/client/src/protocol/core/Contract_pb';
-import { Transaction } from '@tronscan/client/src/protocol/core/Tron_pb';
 import {
+  SmartContract,
+  Transaction,
+} from '@tronscan/client/src/protocol/core/Tron_pb';
+import {
+  AbiCoder,
   concat,
   keccak256,
   Signature,
   SigningKey,
   toUtf8Bytes,
 } from 'ethers';
-import { ITronGetBlockResponse } from '@kitzen/data-transfer-objects';
 
 
 export class Tron {
 
-  // Tron address is 34 characters length, starting with T
-  // https://datatracker.ietf.org/doc/id/draft-msporny-base58-02.txt
-  // this is base58 base characters, no l, 0, O, etc
-  private addressRegex = /T[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{33}/;
+  private static ADDRESS_PREFIX = '41';
 
   // this one is used for calculation transaction fee
   private dummyBlockInfo: ITronGetBlockResponse = {
@@ -47,6 +59,51 @@ export class Tron {
   };
 
 
+  public hexToBase58(value: string): string {
+    return getBase58CheckAddress(this.hexToByteArray(value));
+  }
+
+  public decodeContractData(value: DecodeContractDataParam): DecodeContractDataResult {
+    if (!value.data) {
+      return {
+        fromAddress: this.hexToBase58(value.owner_address),
+        amount: BigInt(value.amount),
+        toAddress: this.hexToBase58(value.to_address),
+      };
+    }
+    const decodedParams = this.decodeParams(['address', 'uint256'], value.data, true);
+    return {
+      fromAddress: this.hexToBase58(value.owner_address),
+      toAddress: this.hexToBase58(decodedParams[0]),
+      amount: decodedParams[1],
+    };
+  }
+
+  private decodeParams(types, output, ignoreMethodHash): any[] {
+    if (!output || typeof output === 'boolean') {
+      ignoreMethodHash = output;
+      output = types;
+    }
+
+    if (ignoreMethodHash && output.replace(/^0x/, '').length % 64 === 8) {
+      output = `0x${output.replace(/^0x/, '').substring(8)}`;
+    }
+
+    const abiCoder = new AbiCoder();
+
+    if (output.replace(/^0x/, '').length % 64) {
+      throw new Error('The encoded string is not valid. Its length must be a multiple of 64.');
+    }
+    return abiCoder.decode(types, output).reduce((obj, arg, index) => {
+      if (types[index] === 'address') {
+        arg = Tron.ADDRESS_PREFIX + arg.substr(2).toLowerCase();
+      }
+      obj.push(arg);
+      return obj;
+    }, []);
+  }
+
+
   public getAddressFromPrivateKey(privateKeyHex: string): Address[] {
     let address = pkToAddress(privateKeyHex);
     return [{ address, derivePath: "m/84'/0'/0'/0/0" }];
@@ -58,7 +115,7 @@ export class Tron {
   }
 
   public validateAddress(address: string): boolean {
-    return this.addressRegex.test(address);
+    return isAddressValid(address);
   }
 
   public signMessage(message: string, privateKeyHex: string): string {
@@ -74,24 +131,37 @@ export class Tron {
   }
 
   public estimateTransactionFee({ accountResources, ...parameters }: EstimateTransactionFeeProps): number {
+    // https://developers.tron.network/reference/estimateenergy-2
     let transaction = this.createTrxTransaction({
       from: parameters.from,
       amount: parameters.amount,
       to: parameters.to,
       blockInfo: this.dummyBlockInfo,
+      network: parameters.network,
+      contractAddress: parameters.contractAddress,
+      feeLimit: parameters.feeLimit, // this can be any number due estimation
     });
-    const transactionHex = this.signTransaction(transaction, parameters.privateKeyHex);
-    // const availableEnergy = parameters.accountResources.TotalEnergyLimit - parameters.accountResources.TotalEnergyWeight;
-    const availableBandwidth = accountResources.TotalNetLimit - accountResources.TotalNetWeight + accountResources.freeNetLimit;
 
-    // This magic numbers were extracted from @kitzen/webExt, I don't do credit about whether it works or not
-    const howManyBandwidthNeed = Math.round(transactionHex.length / 2) + 68;
+    // https://developers.tron.network/docs/faq#5-how-to-calculate-the-bandwidth-and-energy-consumed-when-calling-the-contract
+    // 5. How to calculate the bandwidth and energy consumed when calling the contract?
 
-    const paidBandwidth = howManyBandwidthNeed < availableBandwidth ? 0 : Math.round(Math.abs(availableBandwidth - howManyBandwidthNeed));
-    return paidBandwidth * 1000;
+    const DATA_HEX_PROTOBUF_EXTRA = 3; // extra data to transaction when it's stored in blockchain
+    const MAX_RESULT_SIZE_IN_TX = 64; // 64 is the number of bytes occupied by the transaction result.
+    const A_SIGNATURE = 67; // signature is always 65 bytes + 2 bytes to mark the field start in protobuf
+    // you can check the hex transaction here https://protobuf-decoder.netlify.app/ (2 hex chars = 1 byte)
+    // assuming 1 signature of transaction + data from docs above
+    const howManyBandwidthNeed = transaction.serializeBinary().length + DATA_HEX_PROTOBUF_EXTRA + MAX_RESULT_SIZE_IN_TX + A_SIGNATURE;
+
+    const availableEnergy = accountResources.EnergyLimit - accountResources.EnergyUsed;
+    const availableBandwidth = accountResources.freeNetLimit + accountResources.NetLimit - (accountResources.NetUsed + accountResources.freeNetUsed);
+
+    const paidBandwidth = howManyBandwidthNeed < availableBandwidth ? 0 : howManyBandwidthNeed - availableBandwidth;
+    const paidEnergy = parameters.energyNeeded < availableEnergy ? 0 : parameters.energyNeeded - availableEnergy;
+
+    return paidBandwidth * parameters.bandwidthPrice + paidEnergy * parameters.energyPrice;
   }
 
-  public createTrxTransaction(args: CreateTrxTransactionParams): any {
+  public createTrc10Transaction(args: CreateTrc10TransactionParams): any {
     // this method will create a transaction with required fields on Tron network
     // example of required fields can be checked in TronAPI
     // https://developers.tron.network/reference/broadcasttransaction
@@ -100,20 +170,62 @@ export class Tron {
     transferContract.setOwnerAddress(Uint8Array.from(decode58Check(args.from)));
     transferContract.setAmount(args.amount);
 
-    const protoBufTransferContract = new Any();
+    const parameter = new Any();
     // node_modules/@tronscan/client/protobuf/core/Tron.proto
     // pack(binary, 'package.message')
-    protoBufTransferContract.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
-    const contract = new Transaction.Contract();
-    contract.setType(Transaction.Contract.ContractType.TRANSFERCONTRACT);
-    contract.setParameter(protoBufTransferContract);
+    parameter.pack(transferContract.serializeBinary(), 'protocol.TransferContract');
 
-    const transactionRaw = new Transaction.raw();
-    transactionRaw.addContract(contract);
-    this.addRefBlockToTransaction(args.blockInfo, transactionRaw);
-    const transaction = new Transaction();
-    transaction.setRawData(transactionRaw);
-    return transaction;
+    return this.packTransactionContract(
+      parameter,
+      args.blockInfo,
+      Transaction.Contract.ContractType.TRANSFERCONTRACT,
+      args.feeLimit,
+    );
+  }
+
+  public createTrxTransaction(args: CreateTrxTransactionParams): any {
+    if (args.network == BlockchainNetworkEnum.TRC20 && args.contractAddress) {
+      return this.createTrc20Transaction(args as CreateTrc20TransactionParams);
+    } else if (args.network === BlockchainNetworkEnum.TRC10) {
+      return this.createTrc10Transaction(args);
+    } else {
+      throw Error(`Unsupported network ${args.network}`);
+    }
+  }
+
+  public getTriggerConstantContractRequest(args: GetTriggerConstantContractParams): GetTriggerConstantContractResponse {
+    const parameter = this.encodeSmartContractParams(args.to, args.amount);
+    return {
+      owner_address: args.ownerAddress,
+      contract_address: args.contractAddress,
+      function_selector: 'transfer(address,uint256)',
+      parameter,
+      visible: true,
+    };
+  }
+
+  public createTrc20Transaction(args: CreateTrc20TransactionParams): any {
+    // To understand the magic that goes here, you have to carefuly read Tron protocol documentation in
+    // https://github.com/tronprotocol/documentation-en/blob/master/docs/contracts/trc20.md
+    // as well as Protobuf structure in node_modules/@tronscan/client/protobuf/core/Tron.proto
+
+    // We want to call Trc20 Smart Contract function transfer(address _to, uint _value) returns (bool success);
+    const smartContract = new SmartContract();
+    smartContract.setOriginAddress(Uint8Array.from(decode58Check(args.from)));
+
+    const data = this.encodeSmartContractBytecode(args.to, args.amount);
+    smartContract.setBytecode(data);
+    smartContract.setContractAddress(Uint8Array.from(decode58Check(args.contractAddress)));
+    // google.protobuf.Any parameter = 2;
+    const parameter = new Any();
+    // pack(binary, 'package.Class')
+    parameter.pack(smartContract.serializeBinary(), 'protocol.TriggerSmartContract');
+    return this.packTransactionContract(
+      parameter,
+      args.blockInfo,
+      Transaction.Contract.ContractType.TRIGGERSMARTCONTRACT,
+      args.feeLimit,
+    );
   }
 
   public signTransaction(transaction: any, privateKey: string): string {
@@ -143,20 +255,77 @@ export class Tron {
     return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
   }
 
-  private addRefBlockToTransaction(data: ITronGetBlockResponse, rawTransaction): void {
+  private addRefBlockToTransaction(data: ITronGetBlockResponse, rawTransaction, feeLimit: number): void {
     // get Hex representation of a number with toString(16)
     // and get last 4 bytes, if there are fewer bytes - fill left bytes with 0
 
     // this part is partially from TronWeb
     // https://github.com/kitzen-io/tronweb/blob/180e87e6b580d2ce2b00d2eea2d966a808d94657/src/lib/transactionBuilder.js#L80
-    //
     let hexRefBlockEnd = data.block_header.raw_data.number.toString(16).slice(-4).padStart(4, '0');
+    rawTransaction.setRefBlockBytes(this.hexToUnsignedIntArray(hexRefBlockEnd)); // bytes ref_block_bytes = 1;
+    rawTransaction.setRefBlockHash(this.hexToUnsignedIntArray(data.blockID.slice(16, 32))); // bytes ref_block_hash = 4;
+    // 1 minute by protocol
+    rawTransaction.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // int64 expiration = 8;
+    rawTransaction.setTimestamp(data.block_header.raw_data.timestamp); // int64 timestamp = 14;
+    rawTransaction.setFeeLimit(feeLimit);
+  }
 
-    rawTransaction.setRefBlockBytes(this.hexToUnsignedIntArray(hexRefBlockEnd)); // Set refBlockBytes using block number
-    rawTransaction.setRefBlockHash(this.hexToUnsignedIntArray(data.blockID.slice(16, 32))); // Set refBlockBytes using block number
-    // 1 minute should be enough to finish transaction
-    rawTransaction.setExpiration(data.block_header.raw_data.timestamp + 60 * 1000); // Set refBlockBytes using block number
-    rawTransaction.setTimestamp(data.block_header.raw_data.timestamp); // Set refBlockBytes using block number
+  private packTransactionContract(parameter: Any, blockInfo: ITronGetBlockResponse, contractType: number, feeLimit: number): any {
+    // message protocol.Transaction.Contract
+    const contract = new Transaction.Contract();
+    contract.setType(contractType);
+    contract.setParameter(parameter);
+
+    // message protocol.Transaction.raw
+    const transactionRaw = new Transaction.raw();
+    transactionRaw.addContract(contract);
+    this.addRefBlockToTransaction(blockInfo, transactionRaw, feeLimit);
+
+    // message protocol.Transaction
+    const transaction = new Transaction();
+    transaction.setRawData(transactionRaw);
+    return transaction;
+  }
+
+  /*
+   * Encodes node_modules/@tronscan/client/protobuf/core/Tron.proto
+   * message SmartContract {
+   *    bytes bytecode = 4;
+   * }
+   * */
+  private encodeSmartContractBytecode(to: string, amount: string): Uint8Array {
+    // https://developers.tron.network/docs/parameter-and-return-value-encoding-and-decoding
+    // according to doc https://github.com/tronprotocol/documentation-en/blob/master/docs/contracts/trc20.md
+    // function transfer(address _to, uint _value) returns (bool success);
+    let functionName = keccak256(Buffer.from('transfer(address,uint256)', 'utf-8')).toString().substring(2, 10);
+    let functionParams = this.encodeSmartContractParams(to, amount);
+    return this.hexToUnit8(functionName + functionParams);
+  }
+
+  private encodeSmartContractParams(to: string, amount: string): string {
+    let toAddress = this.base58toHex(to);
+    if (!toAddress.startsWith(Tron.ADDRESS_PREFIX)) { // first T is always a T
+      throw Error('invalid address');
+    }
+    // we intentionally drop first T from address since the protocol works this way
+    // address hex should be 40 length
+    toAddress = toAddress.substring(2);
+
+    let functionParams = AbiCoder.defaultAbiCoder().encode(['address', 'uint256'], [toAddress, amount]);
+    if (!functionParams.startsWith('0x')) { // abi always returns prefix hex 0x
+      throw Error('Invalid Abi encoded result');
+    }
+    // we need to remove it so result is only hex
+    return functionParams.substring(2);
+  }
+
+  private hexToUnit8(hexString: string): Uint8Array {
+    return Uint8Array.from(this.hexToByteArray(hexString));
+  }
+
+  private hexToByteArray(hexString: string): number[] {
+    let pairs = hexString.match(/.{1,2}/g)!; // break down to pairs of 2
+    return pairs.map((byte) => parseInt(byte, 16));
   }
 }
 

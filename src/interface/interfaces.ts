@@ -1,4 +1,5 @@
 import {
+  BlockchainNetworkEnum,
   IAddressDto,
   ITronGetAccountResourcesResponse,
   ITronGetBlockResponse,
@@ -7,6 +8,7 @@ import {
 
 export interface BIP39API {
   mnemonicToSeed(mnemonic: string): Buffer;
+
   generateMnemonic(): Promise<string>;
 }
 
@@ -37,22 +39,61 @@ export interface CreateTransactionInput {
 }
 
 
-export interface CreateTrxTransactionParams {
-  // Proto format uses int,
-  // js max safe integer is 9007199254740992 trx satoshi, which is more than 500M $ if 13'000'000 trx = 1$
-  // this should be sufficient to mark Js Number to cover all transactions costs
-  amount: number;
+export interface CreateTrc10TransactionParams {
+  amount: string;
   to: string;
   from: string;
   blockInfo: ITronGetBlockResponse;
+  feeLimit: number;
 }
 
+export interface CreateTrc20TransactionParams extends CreateTrc10TransactionParams {
+  contractAddress: string;
+}
+
+export interface CreateTrxTransactionParams extends CreateTrc10TransactionParams {
+  contractAddress?: string;
+  network: BlockchainNetworkEnum;
+}
+
+export interface GetTriggerConstantContractParams {
+  ownerAddress: string;
+  contractAddress: string;
+  to: string;
+  amount: string;
+}
+
+export interface DecodeContractDataResult {
+  fromAddress: string;
+  toAddress: string;
+  amount: bigint;
+}
+
+export interface DecodeContractDataParam {
+  amount: number;
+  owner_address: string;
+  to_address: string;
+  data?: string;
+}
+
+export interface GetTriggerConstantContractResponse {
+  owner_address: string;
+  contract_address: string;
+  function_selector: string;
+  parameter: string;
+  visible: boolean;
+}
 
 export interface EstimateTransactionFeeProps {
   accountResources: ITronGetAccountResourcesResponse;
+  network: BlockchainNetworkEnum;
+  contractAddress?: string;
+  bandwidthPrice: number;
+  energyPrice: number;
+  energyNeeded: number;
   from: string;
+  feeLimit: number;
   to: string;
-  amount: number;
-  privateKeyHex: string;
+  amount: string;
 }
 
