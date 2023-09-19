@@ -112,3 +112,42 @@ Thank you to all the dedicated individuals who contribute; your passion drives o
   <img src="https://contrib.rocks/image?repo=kitzen-io/wallet-core-essentials&max=400&columns=20" />
   <img src="https://us-central1-tooljet-hub.cloudfunctions.net/github" width="0" height="0" />
 </a>
+
+
+https://developers.tron.network/reference/estimateenergy-2
+{
+  "prices": "0:100,1575871200000:10,1606537680000:40,1614238080000:140,1635739080000:280,1681895880000:420"
+}
+420 is price per energy 
+https://developers.tron.network/reference/estimateenergy 
+
+{
+  "result": {
+    "result": true
+  },
+  "energy_required": 1082
+}
+
+
+Check the Smart Contract Code: To estimate the energy required, you'll need to check the code of the smart contract, particularly the function being called ("a9059cbb" in your data). This code corresponds to a specific function in the contract, and different functions can consume different amounts of energy.
+
+
+13740900
+= 345000 +  133959000
+133959000 = 31895 * 420
+
+USDT smart contract address in different networks
+```JS
+if ($network == "shasta") {
+    return "TG3XXyExBkPp9nzdajDZsozEu4BkaSJozs";
+} else if ($network == "nile") {
+    return "TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf";
+} else if ($network == "mainnet") {
+    return "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+}
+```
+ only test networks support estimating energy
+ {"result": {"code": "CONTRACT_VALIDATE_ERROR","message": "this node does not support estimate energy"}}
+
+https://developers.tron.network/docs/faq#5-how-to-calculate-the-bandwidth-and-energy-consumed-when-calling-the-contract
+https://developers.tron.network/docs/resource-model

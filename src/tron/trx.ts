@@ -9,6 +9,8 @@ import {
   CreateTrc20TransactionParams,
   CreateTrxTransactionParams,
   EstimateTransactionFeeProps,
+  GetTriggerConstantContractParams,
+  GetTriggerConstantContractResponse,
 } from '../interface/interfaces';
 import { byteArray2hexStr } from '@tronscan/client/src/utils/bytes';
 
@@ -88,22 +90,34 @@ export class Tron {
   }
 
   public estimateTransactionFee({ accountResources, ...parameters }: EstimateTransactionFeeProps): number {
-    let transaction = this.createTrc10Transaction({
+    // https://developers.tron.network/reference/estimateenergy-2
+    let transaction = this.createTrxTransaction({
       from: parameters.from,
       amount: parameters.amount,
       to: parameters.to,
       blockInfo: this.dummyBlockInfo,
-      feeLimit: 100_000_000, // this can be any number due estimation
+      network: parameters.network,
+      contractAddress: parameters.contractAddress,
+      feeLimit: parameters.feeLimit, // this can be any number due estimation
     });
-    const transactionHex = this.signTransaction(transaction, parameters.privateKeyHex);
-    // const availableEnergy = parameters.accountResources.TotalEnergyLimit - parameters.accountResources.TotalEnergyWeight;
-    const availableBandwidth = accountResources.TotalNetLimit - accountResources.TotalNetWeight + accountResources.freeNetLimit;
 
-    // This magic numbers were extracted from @kitzen/webExt, I don't do credit about whether it works or not
-    const howManyBandwidthNeed = Math.round(transactionHex.length / 2) + 68;
+    // https://developers.tron.network/docs/faq#5-how-to-calculate-the-bandwidth-and-energy-consumed-when-calling-the-contract
+    // 5. How to calculate the bandwidth and energy consumed when calling the contract?
 
-    const paidBandwidth = howManyBandwidthNeed < availableBandwidth ? 0 : Math.round(Math.abs(availableBandwidth - howManyBandwidthNeed));
-    return paidBandwidth * 1000;
+    const DATA_HEX_PROTOBUF_EXTRA = 3; // extra data to transaction when it's stored in blockchain
+    const MAX_RESULT_SIZE_IN_TX = 64; // 64 is the number of bytes occupied by the transaction result.
+    const A_SIGNATURE = 67; // signature is always 65 bytes + 2 bytes to mark the field start in protobuf
+    // you can check the hex transaction here https://protobuf-decoder.netlify.app/ (2 hex chars = 1 byte)
+    // assuming 1 signature of transaction + data from docs above
+    const howManyBandwidthNeed = transaction.serializeBinary().length + DATA_HEX_PROTOBUF_EXTRA + MAX_RESULT_SIZE_IN_TX + A_SIGNATURE;
+
+    const availableEnergy = accountResources.EnergyLimit - accountResources.EnergyUsed;
+    const availableBandwidth = accountResources.freeNetLimit + accountResources.NetLimit - (accountResources.NetUsed + accountResources.freeNetUsed);
+
+    const paidBandwidth = howManyBandwidthNeed < availableBandwidth ? 0 : howManyBandwidthNeed - availableBandwidth;
+    const paidEnergy = parameters.energyNeeded < availableEnergy ? 0 : parameters.energyNeeded - availableEnergy;
+
+    return paidBandwidth * parameters.bandwidthPrice + paidEnergy * parameters.energyPrice;
   }
 
   public createTrc10Transaction(args: CreateTrc10TransactionParams): any {
@@ -136,6 +150,17 @@ export class Tron {
     } else {
       throw Error(`Unsupported network ${args.network}`);
     }
+  }
+
+  public getTriggerConstantContractRequest(args: GetTriggerConstantContractParams): GetTriggerConstantContractResponse {
+    const parameter = this.encodeSmartContractParams(args.to, args.amount);
+    return {
+      owner_address: args.ownerAddress,
+      contract_address: args.contractAddress,
+      function_selector: 'transfer(address,uint256)',
+      parameter,
+      visible: true,
+    };
   }
 
   public createTrc20Transaction(args: CreateTrc20TransactionParams): any {
@@ -228,9 +253,15 @@ export class Tron {
    * }
    * */
   private encodeSmartContractBytecode(to: string, amount: string): Uint8Array {
+    // https://developers.tron.network/docs/parameter-and-return-value-encoding-and-decoding
     // according to doc https://github.com/tronprotocol/documentation-en/blob/master/docs/contracts/trc20.md
     // function transfer(address _to, uint _value) returns (bool success);
     let functionName = keccak256(Buffer.from('transfer(address,uint256)', 'utf-8')).toString().substring(2, 10);
+    let functionParams = this.encodeSmartContractParams(to, amount);
+    return this.hexToUnit8(functionName + functionParams);
+  }
+
+  private encodeSmartContractParams(to: string, amount: string): string {
     let toAddress = this.base58toHex(to);
     if (!toAddress.startsWith('41')) { // first T is always a T
       throw Error('invalid address');
@@ -244,8 +275,7 @@ export class Tron {
       throw Error('Invalid Abi encoded result');
     }
     // we need to remove it so result is only hex
-    functionParams = functionParams.substring(2);
-    return this.hexToUnit8(functionName + functionParams);
+    return functionParams.substring(2);
   }
 }
 

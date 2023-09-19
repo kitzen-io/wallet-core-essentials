@@ -5,6 +5,7 @@ import {
   createTrxTransactionRes,
   privateKeyHex
 } from './fixtures/consts';
+import { BlockchainNetworkEnum } from '@kitzen/data-transfer-objects';
 
 
 describe('trx', () => {
@@ -68,7 +69,7 @@ describe('trx', () => {
       blockInfo,
       feeLimit: 10_000_000,
     });
-     let res2 = trx.signTransaction(result, privateKeyHex)
+    let res2 = trx.signTransaction(result, privateKeyHex)
     expect(res2).toStrictEqual(createTrc20Res);
   });
 
@@ -78,6 +79,7 @@ describe('trx', () => {
       "to": "TNWaTu5aATAUP9vhBPeWFMLEFjesCQ6j4u",
       "amount": "130107",
       "from": "TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht",
+      network: BlockchainNetworkEnum.TRC10,
       "privateKeyHex": privateKeyHex,
       "accountResources": {
         "freeNetLimit": 600,
@@ -93,6 +95,11 @@ describe('trx', () => {
             "value": 0
           }
         ],
+        EnergyUsed: 0,
+        EnergyLimit: 0,
+        NetUsed: 0,
+        NetLimit: 0,
+        freeNetUsed: 0,
         "TotalNetLimit": 43200000000,
         "TotalNetWeight": 41417889010,
         "TotalEnergyLimit": 90000000000,
