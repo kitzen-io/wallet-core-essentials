@@ -15,22 +15,10 @@ Modify package.json with
   }
 }
 ```
-Execute the following commands
+Copy patches
 ```bash
-mkdir -p ./patches
-cat > patches/cipher-base+1.0.4.patch <<- EOM
-diff --git a/node_modules/cipher-base/index.js b/node_modules/cipher-base/index.js
-index 6728005..fd5ada7 100644
---- a/node_modules/cipher-base/index.js
-+++ b/node_modules/cipher-base/index.js
-@@ -1,5 +1,5 @@
- var Buffer = require('safe-buffer').Buffer
--var Transform = require('stream').Transform
-+var Transform = require('stream-browserify').Transform
- var StringDecoder = require('string_decoder').StringDecoder
- var inherits = require('inherits')
-
-EOM
+mkdir ./patches
+cp ./node_modules/@tronscan/client/patches/* ./patches
 ```
 Install the package
 

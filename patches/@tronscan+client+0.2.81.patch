@@ -1,0 +1,65 @@
+diff --git a/node_modules/@tronscan/client/src/protocol/api/api_pb.js b/node_modules/@tronscan/client/src/protocol/api/api_pb.js
+index 3052560..2ea211e 100644
+--- a/node_modules/@tronscan/client/src/protocol/api/api_pb.js
++++ b/node_modules/@tronscan/client/src/protocol/api/api_pb.js
+@@ -9,7 +9,7 @@
+
+ var jspb = require('google-protobuf');
+ var goog = jspb;
+-var global = Function('return this')();
++var global = globalThis;
+
+ var core_Tron_pb = require('../core/Tron_pb.js');
+ var core_Contract_pb = require('../core/Contract_pb.js');
+diff --git a/node_modules/@tronscan/client/src/protocol/core/Contract_pb.js b/node_modules/@tronscan/client/src/protocol/core/Contract_pb.js
+index a31ef63..a6b578f 100644
+--- a/node_modules/@tronscan/client/src/protocol/core/Contract_pb.js
++++ b/node_modules/@tronscan/client/src/protocol/core/Contract_pb.js
+@@ -9,7 +9,7 @@
+
+ var jspb = require('google-protobuf');
+ var goog = jspb;
+-var global = Function('return this')();
++var global = globalThis;
+
+ var core_Tron_pb = require('../core/Tron_pb.js');
+ goog.exportSymbol('proto.protocol.AccountCreateContract', null, global);
+diff --git a/node_modules/@tronscan/client/src/protocol/core/Discover_pb.js b/node_modules/@tronscan/client/src/protocol/core/Discover_pb.js
+index 2f1745d..6e5723c 100644
+--- a/node_modules/@tronscan/client/src/protocol/core/Discover_pb.js
++++ b/node_modules/@tronscan/client/src/protocol/core/Discover_pb.js
+@@ -9,7 +9,7 @@
+
+ var jspb = require('google-protobuf');
+ var goog = jspb;
+-var global = Function('return this')();
++var global = globalThis;
+
+ goog.exportSymbol('proto.protocol.BackupMessage', null, global);
+ goog.exportSymbol('proto.protocol.Endpoint', null, global);
+diff --git a/node_modules/@tronscan/client/src/protocol/core/TronInventoryItems_pb.js b/node_modules/@tronscan/client/src/protocol/core/TronInventoryItems_pb.js
+index d2744d7..42cdb6c 100644
+--- a/node_modules/@tronscan/client/src/protocol/core/TronInventoryItems_pb.js
++++ b/node_modules/@tronscan/client/src/protocol/core/TronInventoryItems_pb.js
+@@ -9,7 +9,7 @@
+
+ var jspb = require('google-protobuf');
+ var goog = jspb;
+-var global = Function('return this')();
++var global = globalThis;
+
+ goog.exportSymbol('proto.protocol.InventoryItems', null, global);
+
+diff --git a/node_modules/@tronscan/client/src/protocol/core/Tron_pb.js b/node_modules/@tronscan/client/src/protocol/core/Tron_pb.js
+index eb92447..60822cb 100644
+--- a/node_modules/@tronscan/client/src/protocol/core/Tron_pb.js
++++ b/node_modules/@tronscan/client/src/protocol/core/Tron_pb.js
+@@ -9,7 +9,7 @@
+
+ var jspb = require('google-protobuf');
+ var goog = jspb;
+-var global = Function('return this')();
++var global = globalThis;
+
+ var google_protobuf_any_pb = require('google-protobuf/google/protobuf/any_pb.js');
+ var core_Discover_pb = require('../core/Discover_pb.js');
