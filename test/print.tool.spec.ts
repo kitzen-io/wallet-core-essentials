@@ -1,5 +1,8 @@
 import { PrintTool } from "../src";
-import * as assetMetadata from "@kitzen/assets/lib/assets.metadata.constant.json";
+import {
+  getAssetMetadata,
+  getAssetMetadataObject
+} from "@kitzen/assets";
 import { BlockchainNetworkEnum } from '@kitzen/data-transfer-objects';
 
 
@@ -7,7 +10,7 @@ describe('print.tool', () => {
 
   let printTool: PrintTool;
   beforeEach(() => {
-    printTool = new PrintTool((assetMetadata));
+    printTool = new PrintTool(getAssetMetadataObject('production'));
   });
 
   test('convertBigNumber', () => {

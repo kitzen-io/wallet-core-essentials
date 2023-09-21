@@ -2,7 +2,7 @@ import {
   BlockchainNetworkEnum,
   IAssetBalance,
 } from '@kitzen/data-transfer-objects';
-import type { IAssetMetadata } from '@kitzen/assets';
+import type { IAssetMetadataObject } from '@kitzen/assets';
 import CalculationTool from '../tool/calculation.tool';
 
 export type CoinIdentifier = Pick<IAssetBalance, 'identifier' | 'network'>;
@@ -12,11 +12,7 @@ export type AssetIdentifierWithRate = Pick<IAssetBalance, 'identifier' | 'balanc
 export class PrintTool {
   private usdFormatter = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'USD' });
 
-  public constructor(private readonly assetsInfo: {
-    [network: string]: {
-      [identifier: string]: IAssetMetadata;
-    };
-  }) {
+  public constructor(private readonly assetsInfo: IAssetMetadataObject) {
   }
 
   public printFiat(num?: number): string {
