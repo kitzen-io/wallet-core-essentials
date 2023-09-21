@@ -100,17 +100,6 @@ class CalculationTool {
       .toFixed();
   };
 
-  /**
-   * Convert fiat to crypto by currency rate
-   * @param amount - amount in any currency
-   * @param rate - rate usd of amount
-   * @param rateCurrency - rate usd of wanted currency
-   * toCrypto(
-   */
-  public static toCurrency(amount: number, rate: number, rateCurrency: number): number {
-    return (amount / rate) * rateCurrency;
-  }
-
   public static setup(): void {
     BigNumber.config({ EXPONENTIAL_AT: 1000000000 });
     BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_CEIL });
