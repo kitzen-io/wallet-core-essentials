@@ -755,10 +755,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kitzen/assets@^1.0.13":
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.13.tgz#4c835f5ad94d1c63e9b6797a7f15e1c10d6e151f"
-  integrity sha512-5NmMFkn6bmUQd2SoWloO/Mm6PuJW/rXQpV5y0ng3jt6hNdltvT7OhUEGYtBKiq6GkCfknerW9xcuMJ1pByrcRA==
+"@kitzen/assets@^1.0.14":
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.14.tgz#0adb873ca66ee8843bf4be3ac23124fe92e09085"
+  integrity sha512-p/NwIVZEOscTtse7RmMLSvgbTXIDKIvjFtWFmVyxlmFCO/m/h58sh+PWiwH+FZQKm3cLPcrHrtwVoMv93QuQZA==
 
 "@kitzen/data-transfer-objects@^1.0.47":
   version "1.0.47"

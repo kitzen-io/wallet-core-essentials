@@ -1,6 +1,6 @@
 {
   "name": "@kitzen/wallet-core-essentials",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "description": "Kitzen Wallet Core Essentials is an open-source library, provides reusable components and core cryptographic wallet functionality for a different blockchains. It is a core part of Kitzen Wallet.",
   "author": "kitzen <kitzen.io>",
   "homepage": "https://github.com/kitzen-io/wallet-core-essentials#readme",
@@ -55,7 +55,7 @@
     "@kitzen/assets": "*"
   },
   "devDependencies": {
-    "@kitzen/assets": "^1.0.13",
+    "@kitzen/assets": "^1.0.14",
     "@types/create-hmac": "^1.1.0",
     "@types/google-protobuf": "^3.15.6",
     "@types/jest": "^26.0.0",

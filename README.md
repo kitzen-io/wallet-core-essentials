@@ -113,7 +113,7 @@ Thank you to all the dedicated individuals who contribute; your passion drives o
   <img src="https://us-central1-tooljet-hub.cloudfunctions.net/github" width="0" height="0" />
 </a>
 
-
+## Other Useful links
 https://developers.tron.network/reference/estimateenergy-2
 {
   "prices": "0:100,1575871200000:10,1606537680000:40,1614238080000:140,1635739080000:280,1681895880000:420"
@@ -131,10 +131,22 @@ https://developers.tron.network/reference/estimateenergy
 
 Check the Smart Contract Code: To estimate the energy required, you'll need to check the code of the smart contract, particularly the function being called ("a9059cbb" in your data). This code corresponds to a specific function in the contract, and different functions can consume different amounts of energy.
 
+To get Test tokens on shasta network. Follow twitter https://twitter.com/TronTest2 and Write your address in your tweet and
+```text
+@TronTest2
+TrxpublicAddress
+```
+That didn't work for me though.
 
-13740900
-= 345000 +  133959000
-133959000 = 31895 * 420
+To get Smart contract assets, join [discord channel](https://discord.gg/CzUFtfBZ), go to  faucet channel and type  
+```text
+!shasta_usdt TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht
+```
+or 
+```text
+!shasta TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht
+```
+where TM94JwXLN33Gw4L8KF1eBPaEEPcdQi6hht is your public address
 
 USDT smart contract address in different networks
 ```JS
