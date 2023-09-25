@@ -2,7 +2,10 @@ import {
   BlockchainNetworkEnum,
   IAssetBalance,
 } from '@kitzen/data-transfer-objects';
-import type { IAssetMetadataObject } from '@kitzen/assets';
+import type {
+  IAssetMetadata,
+  IAssetMetadataObject,
+} from '@kitzen/assets';
 import CalculationTool from '../tool/calculation.tool';
 
 export type CoinIdentifier = Pick<IAssetBalance, 'identifier' | 'network'>;
@@ -34,17 +37,17 @@ export class PrintTool {
     if (num == undefined || !network || !identifier) {
       return '?';
     }
-    const coinSymbol = this.assetsInfo[network][identifier].symbol;
-    const decimals = this.assetsInfo[network][identifier].decimals;
+    const coinSymbol = this.getAssetInfo(network, identifier, 'symbol');
+    const decimals = this.getAssetInfo(network, identifier, 'decimals');
     return `${num.toFixed(decimals)} ${coinSymbol}`;
   }
 
   public printCoinName(network: BlockchainNetworkEnum, identifier: string): string {
-    return this.assetsInfo[network]?.[identifier]?.symbol || '?';
+    return this.getAssetInfo(network, identifier, 'symbol', '?');
   }
 
   public getDecimals(network: BlockchainNetworkEnum, identifier: string): number {
-    return this.assetsInfo[network]?.[identifier]?.decimals || 1;
+    return this.getAssetInfo(network, identifier, 'decimals', 1);
   }
 
   public parseStringFloatCrypto(num: string, network: BlockchainNetworkEnum, identifier = 'coin'): string {
@@ -59,7 +62,7 @@ export class PrintTool {
     if (!asset || !asset.balance) {
       return BigInt(0);
     }
-    const decimals = this.assetsInfo[asset.network][asset.identifier].decimals;
+    const decimals = this.getAssetInfo(asset.network, asset.identifier, 'decimals');
     let commaIndex = asset.balance.indexOf('.');
     if (commaIndex < 0) {
       return BigInt(asset.balance) * BigInt(Math.pow(10, decimals));
@@ -78,8 +81,8 @@ export class PrintTool {
       return '?';
     }
 
-    let decimals = this.assetsInfo[asset.network][asset.identifier].decimals;
-    let inCrypto =  Number(asset.balance) / Math.pow(10, decimals);
+    let decimals = this.getAssetInfo(asset.network, asset.identifier, 'decimals');
+    let inCrypto = Number(asset.balance) / Math.pow(10, decimals);
     return this.printCrypto(inCrypto, asset.network, asset.identifier);
   }
 
@@ -87,7 +90,7 @@ export class PrintTool {
     if (!asset) {
       return 0;
     }
-    let decimals = this.assetsInfo[asset.network][asset.identifier].decimals;
+    let decimals = this.getAssetInfo(asset.network, asset.identifier, 'decimals');
     return CalculationTool.multiply(asset.rate, asset.balance, decimals);
   }
 
@@ -96,6 +99,23 @@ export class PrintTool {
       dateStyle: 'short',
       timeStyle: 'short',
     });
+  }
+
+  private getAssetInfo<T extends keyof IAssetMetadata>(
+    network: BlockchainNetworkEnum,
+    identifier: string,
+    field: T,
+    defaultValue?: IAssetMetadata[T],
+  ): IAssetMetadata[T] {
+    const asset: IAssetMetadata = this.assetsInfo[network]?.[identifier];
+    if (!asset) {
+      if (defaultValue == undefined) {
+        throw Error(`Information about asset ${network} ${identifier} not found`);
+      } else {
+        return defaultValue;
+      }
+    }
+    return asset[field];
   }
 
 }
