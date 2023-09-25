@@ -38,7 +38,10 @@ export class PrintTool {
       return '?';
     }
     const coinSymbol = this.getAssetInfo(network, identifier, 'symbol');
-    const decimals = this.getAssetInfo(network, identifier, 'decimals');
+    let decimals = this.getAssetInfo(network, identifier, 'decimals');
+    if (decimals > 8) {
+      decimals = 8;
+    }
     return `${num.toFixed(decimals)} ${coinSymbol}`;
   }
 
