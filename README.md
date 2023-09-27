@@ -44,12 +44,17 @@ Initialize factory, before using it:
 ```typescript
 import {Buffer} from "buffer";
 import {CryptoFactory} from "@kitzen/wallet-core-essentials";
-import bip39 from "bip39";
+import {
+  mnemonicToSeedSync,
+  generateMnemonic
+} from "bip39";
 
 global.Buffer = Buffer;
-CryptoFactory.setBip39(bip39);
+CryptoFactory.setBip39({
+  mnemonicToSeed: mnemonicToSeedSync,
+  generateMnemonic: async(...args) => generateMnemonic(...args),
+});
 ```
-
 
 ## Tron hex message decode
 
