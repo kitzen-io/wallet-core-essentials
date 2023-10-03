@@ -48,8 +48,8 @@ export class PrintTool {
     if (props.balance.match(/^([0-9]{1,})?(\.)?([0-9]{1,2})?$/)) {
       const decimals = this.getDecimals(props.network, props.identifier);
       return BigNumber(props.balance)
+        .div(props.rate)
         .div(this.getCurrentCurrencyRate())
-        .multipliedBy(props.rate)
         .toFixed(decimals);
     } else {
       return null;
@@ -64,8 +64,8 @@ export class PrintTool {
     const regex = new RegExp(`^([0-9]{1,})?(\\.)?([0-9]{1,${decimals}})?\$`);
     if (props.balance && props.balance.match(regex)) {
       return BigNumber(props.balance)
-        .div(props.rate)
         .multipliedBy(this.getCurrentCurrencyRate())
+        .multipliedBy(props.rate)
         .toFixed(2);
     } else {
       return null;
