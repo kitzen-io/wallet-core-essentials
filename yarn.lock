@@ -755,15 +755,15 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kitzen/assets@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.14.tgz#0adb873ca66ee8843bf4be3ac23124fe92e09085"
-  integrity sha512-p/NwIVZEOscTtse7RmMLSvgbTXIDKIvjFtWFmVyxlmFCO/m/h58sh+PWiwH+FZQKm3cLPcrHrtwVoMv93QuQZA==
+"@kitzen/assets@^1.0.18":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.18.tgz#df94f2f1f660df6ea52da47da155a36525ecd254"
+  integrity sha512-PsekTx47IylJeDhSETl5dBvO3DkdLhzmO6CT8Cz+YlciBMJRsKsKN7Ci91bWm7ySbx2QnstY+2lH8qykLT6Vpw==
 
-"@kitzen/data-transfer-objects@^1.0.48":
-  version "1.0.48"
-  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.48.tgz#d64b5f4c1de077162642905c1d0744f1c50ce4eb"
-  integrity sha512-RhJKO0UXPh++4ucezoFCD5/3HY8jEAuBuio77voQW9DEJxT9EQuqI2uh3yda/393xyh+rYET/iZRzqLwGsELjA==
+"@kitzen/data-transfer-objects@^1.0.57":
+  version "1.0.57"
+  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.57.tgz#1ae4912fa7601e89a2a4d2a8064caff9b5a40e9e"
+  integrity sha512-pbfYG25NyQ4K2nl7CErAiiyd+tjNfqE4xxQlYI6O7/aPAoSDzsfyw2JBF8f2hbuR8XH2P74MDgoR3N2Un55Pag==
 
 "@noble/curves@1.1.0", "@noble/curves@~1.1.0":
   version "1.1.0"

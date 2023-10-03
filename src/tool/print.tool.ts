@@ -1,5 +1,6 @@
 import {
   BlockchainNetworkEnum,
+  FiatCurrency,
   IAssetBalance,
 } from '@kitzen/data-transfer-objects';
 import type {
@@ -7,23 +8,68 @@ import type {
   IAssetMetadataObject,
 } from '@kitzen/assets';
 import CalculationTool from '../tool/calculation.tool';
+import BigNumber from 'bignumber.js';
 
-export type CoinIdentifier = Pick<IAssetBalance, 'identifier' | 'network'>;
 export type AssetIdentifier = Pick<IAssetBalance, 'identifier' | 'balance' | 'network'>;
 export type AssetIdentifierWithRate = Pick<IAssetBalance, 'identifier' | 'balance' | 'network' | 'rate'>;
 
+
 export class PrintTool {
-  private usdFormatter = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'USD' });
-
-  public constructor(private readonly assetsInfo: IAssetMetadataObject) {
+  public constructor(
+    private readonly assetsInfo: IAssetMetadataObject,
+    private readonly getLocale: () => string,
+    private readonly getCurrentCurrencyRate: () => number,
+    private readonly getCurrentCurrencyIdentifier: () => FiatCurrency,
+  ) {
   }
 
-  public printFiat(num?: number): string {
-    return this.usdFormatter.format(num || 0);
+  public printFiatNative(num?: number): string {
+    const options = {
+      style: 'currency',
+      currency: this.getCurrentCurrencyIdentifier()!.toUpperCase(),
+    };
+    const locale = this.getLocale();
+    const formatter = new Intl.NumberFormat(locale, options);
+    return formatter.format(num || 0);
   }
 
-  public printRate(num?: string): string {
-    return this.printFiat(num ? Number(num) : undefined);
+  public printRate(rate?: string): string {
+    if (rate === undefined) {
+      return '?';
+    }
+    const normalizedRate = new BigNumber(rate).multipliedBy(this.getCurrentCurrencyRate()).toNumber();
+    return this.printFiatNative(normalizedRate);
+  }
+
+  public inputFiatToInputCrypto(props: AssetIdentifierWithRate): string | null {
+    if (props.balance.trim() == '') {
+      return '';
+    }
+    if (props.balance.match(/^([0-9]{1,})?(\.)?([0-9]{1,2})?$/)) {
+      const decimals = this.getDecimals(props.network, props.identifier);
+      return BigNumber(props.balance)
+        .div(this.getCurrentCurrencyRate())
+        .multipliedBy(props.rate)
+        .toFixed(decimals);
+    } else {
+      return null;
+    }
+  }
+
+  public inputInCryptoToInputFiat(props: AssetIdentifierWithRate): string | null {
+    if (props.balance.trim() == '') {
+      return '';
+    }
+    const decimals = this.getDecimals(props.network, props.identifier);
+    const regex = new RegExp(`^([0-9]{1,})?(\\.)?([0-9]{1,${decimals}})?\$`);
+    if (props.balance && props.balance.match(regex)) {
+      return BigNumber(props.balance)
+        .div(props.rate)
+        .multipliedBy(this.getCurrentCurrencyRate())
+        .toFixed(2);
+    } else {
+      return null;
+    }
   }
 
   public printTransactionId(tx: string): string {
@@ -58,7 +104,7 @@ export class PrintTool {
   }
 
   public printFiatAsset(asset?: AssetIdentifierWithRate): string {
-    return this.printFiat(this.getAssetInFiat(asset));
+    return this.printFiatNative(this.getAssetInFiat(asset));
   }
 
   public stringCryptoToBigIngSatoshi(asset?: AssetIdentifier): bigint {
@@ -93,8 +139,9 @@ export class PrintTool {
     if (!asset) {
       return 0;
     }
-    let decimals = this.getAssetInfo(asset.network, asset.identifier, 'decimals');
-    return CalculationTool.multiply(asset.rate, asset.balance, decimals);
+    const decimals = this.getAssetInfo(asset.network, asset.identifier, 'decimals');
+    const rate = BigNumber(asset.rate).multipliedBy(this.getCurrentCurrencyRate()).toString();
+    return CalculationTool.multiply(rate, asset.balance, decimals);
   }
 
   public printDate(date: string): string {

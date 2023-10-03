@@ -36,13 +36,13 @@ describe('print.tool', () => {
 
   describe('printFiat', () => {
     it('should format a number as USD currency', () => {
-      const formattedValue = printTool.printFiat(1000);
+      const formattedValue = printTool.printFiatNative(1000);
       expect(formattedValue).toBe('$1,000.00');
     });
 
     it('should handle undefined or zero gracefully', () => {
-      expect(printTool.printFiat()).toBe('$0.00');
-      expect(printTool.printFiat(0)).toBe('$0.00');
+      expect(printTool.printFiatNative()).toBe('$0.00');
+      expect(printTool.printFiatNative(0)).toBe('$0.00');
     });
   });
 
