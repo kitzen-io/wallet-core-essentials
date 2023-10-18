@@ -1,0 +1,136 @@
+diff --git a/node_modules/ethers/dist/ethers.js b/node_modules/ethers/dist/ethers.js
+index 4d7d066..710c3fe 100644
+--- a/node_modules/ethers/dist/ethers.js
++++ b/node_modules/ethers/dist/ethers.js
+@@ -607,11 +607,6 @@ function toBeHex(_value, _width) {
+     }
+     else {
+         const width = getNumber(_width, "width");
+-        assert$1(width * 2 >= result.length, `value exceeds width (${width} bits)`, "NUMERIC_FAULT", {
+-            operation: "toBeHex",
+-            fault: "overflow",
+-            value: _value
+-        });
+         // Pad the value to the required width
+         while (result.length < (width * 2)) {
+             result = "0" + result;
+@@ -7149,7 +7144,7 @@ class AddressCoder extends Coder {
+         return writer.writeValue(value);
+     }
+     decode(reader) {
+-        return getAddress(toBeHex(reader.readValue(), 20));
++        return toBeHex(reader.readValue(), 20);
+     }
+ }
+ 
+diff --git a/node_modules/ethers/dist/ethers.umd.js b/node_modules/ethers/dist/ethers.umd.js
+index 0c47e62..aeb10ba 100644
+--- a/node_modules/ethers/dist/ethers.umd.js
++++ b/node_modules/ethers/dist/ethers.umd.js
+@@ -613,11 +613,6 @@ const __$G = (typeof globalThis !== 'undefined' ? globalThis: typeof window !==
+         }
+         else {
+             const width = getNumber(_width, "width");
+-            assert$1(width * 2 >= result.length, `value exceeds width (${width} bits)`, "NUMERIC_FAULT", {
+-                operation: "toBeHex",
+-                fault: "overflow",
+-                value: _value
+-            });
+             // Pad the value to the required width
+             while (result.length < (width * 2)) {
+                 result = "0" + result;
+@@ -7155,7 +7150,7 @@ const __$G = (typeof globalThis !== 'undefined' ? globalThis: typeof window !==
+             return writer.writeValue(value);
+         }
+         decode(reader) {
+-            return getAddress(toBeHex(reader.readValue(), 20));
++            return toBeHex(reader.readValue(), 20);
+         }
+     }
+ 
+diff --git a/node_modules/ethers/lib.commonjs/abi/coders/address.js b/node_modules/ethers/lib.commonjs/abi/coders/address.js
+index 6594083..4621a8c 100644
+--- a/node_modules/ethers/lib.commonjs/abi/coders/address.js
++++ b/node_modules/ethers/lib.commonjs/abi/coders/address.js
+@@ -26,7 +26,7 @@ class AddressCoder extends abstract_coder_js_1.Coder {
+         return writer.writeValue(value);
+     }
+     decode(reader) {
+-        return (0, index_js_1.getAddress)((0, maths_js_1.toBeHex)(reader.readValue(), 20));
++        return (0, maths_js_1.toBeHex)(reader.readValue(), 20);
+     }
+ }
+ exports.AddressCoder = AddressCoder;
+diff --git a/node_modules/ethers/lib.commonjs/utils/maths.js b/node_modules/ethers/lib.commonjs/utils/maths.js
+index 6a1ac63..7b4fac7 100644
+--- a/node_modules/ethers/lib.commonjs/utils/maths.js
++++ b/node_modules/ethers/lib.commonjs/utils/maths.js
+@@ -175,11 +175,6 @@ function toBeHex(_value, _width) {
+     }
+     else {
+         const width = getNumber(_width, "width");
+-        (0, errors_js_1.assert)(width * 2 >= result.length, `value exceeds width (${width} bits)`, "NUMERIC_FAULT", {
+-            operation: "toBeHex",
+-            fault: "overflow",
+-            value: _value
+-        });
+         // Pad the value to the required width
+         while (result.length < (width * 2)) {
+             result = "0" + result;
+diff --git a/node_modules/ethers/lib.esm/abi/coders/address.js b/node_modules/ethers/lib.esm/abi/coders/address.js
+index 445029c..0ca3fe2 100644
+--- a/node_modules/ethers/lib.esm/abi/coders/address.js
++++ b/node_modules/ethers/lib.esm/abi/coders/address.js
+@@ -23,7 +23,7 @@ export class AddressCoder extends Coder {
+         return writer.writeValue(value);
+     }
+     decode(reader) {
+-        return getAddress(toBeHex(reader.readValue(), 20));
++        return toBeHex(reader.readValue(), 20);
+     }
+ }
+ //# sourceMappingURL=address.js.map
+diff --git a/node_modules/ethers/lib.esm/utils/maths.js b/node_modules/ethers/lib.esm/utils/maths.js
+index 122ce04..af96897 100644
+--- a/node_modules/ethers/lib.esm/utils/maths.js
++++ b/node_modules/ethers/lib.esm/utils/maths.js
+@@ -164,11 +164,6 @@ export function toBeHex(_value, _width) {
+     }
+     else {
+         const width = getNumber(_width, "width");
+-        assert(width * 2 >= result.length, `value exceeds width (${width} bits)`, "NUMERIC_FAULT", {
+-            operation: "toBeHex",
+-            fault: "overflow",
+-            value: _value
+-        });
+         // Pad the value to the required width
+         while (result.length < (width * 2)) {
+             result = "0" + result;
+diff --git a/node_modules/ethers/src.ts/abi/coders/address.ts b/node_modules/ethers/src.ts/abi/coders/address.ts
+index 160b132..699c8a5 100644
+--- a/node_modules/ethers/src.ts/abi/coders/address.ts
++++ b/node_modules/ethers/src.ts/abi/coders/address.ts
+@@ -31,6 +31,6 @@ export class AddressCoder extends Coder {
+     }
+ 
+     decode(reader: Reader): any {
+-        return getAddress(toBeHex(reader.readValue(), 20));
++        return toBeHex(reader.readValue(), 20);
+     }
+ }
+diff --git a/node_modules/ethers/src.ts/utils/maths.ts b/node_modules/ethers/src.ts/utils/maths.ts
+index c259147..813b738 100644
+--- a/node_modules/ethers/src.ts/utils/maths.ts
++++ b/node_modules/ethers/src.ts/utils/maths.ts
+@@ -191,11 +191,6 @@ export function toBeHex(_value: BigNumberish, _width?: Numeric): string {
+         if (result.length % 2) { result = "0" + result; }
+     } else {
+         const width = getNumber(_width, "width");
+-        assert(width * 2 >= result.length, `value exceeds width (${ width } bits)`, "NUMERIC_FAULT", {
+-            operation: "toBeHex",
+-            fault: "overflow",
+-            value: _value
+-        });
+ 
+         // Pad the value to the required width
+         while (result.length < (width * 2)) { result = "0" + result; }

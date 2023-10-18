@@ -8,8 +8,9 @@ import {
 
 export interface BIP39API {
   mnemonicToSeed(mnemonic: string): Buffer;
-
   generateMnemonic(): Promise<string>;
+  validateMnemonic(mnemonic: string, wordlist?: string[]): boolean;
+  wordslist: { [index: string]: string[] }
 }
 
 export interface Address {
@@ -45,6 +46,7 @@ export interface CreateTrc10TransactionParams {
   from: string;
   blockInfo: ITronGetBlockResponse;
   feeLimit: number;
+  contractAddress?: string;
 }
 
 export interface CreateTrc20TransactionParams extends CreateTrc10TransactionParams {
@@ -52,7 +54,6 @@ export interface CreateTrc20TransactionParams extends CreateTrc10TransactionPara
 }
 
 export interface CreateTrxTransactionParams extends CreateTrc10TransactionParams {
-  contractAddress?: string;
   network: BlockchainNetworkEnum;
 }
 
@@ -70,9 +71,9 @@ export interface DecodeContractDataResult {
 }
 
 export interface DecodeContractDataParam {
-  amount: number;
+  amount?: number;
   owner_address: string;
-  to_address: string;
+  to_address?: string;
   data?: string;
 }
 
