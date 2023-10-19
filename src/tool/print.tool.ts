@@ -35,7 +35,7 @@ export class PrintTool {
 
   public printRate(rate?: string): string {
     if (rate === undefined) {
-      return '?';
+      return this.printFiatNative(0)
     }
     const normalizedRate = new BigNumber(rate).multipliedBy(this.getCurrentCurrencyRate()).toNumber();
     return this.printFiatNative(normalizedRate);

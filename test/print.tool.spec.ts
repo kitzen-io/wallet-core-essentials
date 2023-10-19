@@ -1,16 +1,13 @@
-import { PrintTool } from "../src";
-import {
-  getAssetMetadata,
-  getAssetMetadataObject
-} from "@kitzen/assets";
-import { BlockchainNetworkEnum } from '@kitzen/data-transfer-objects';
+import {PrintTool} from "../src";
+import {getAssetMetadataObject} from "@kitzen/assets";
+import {BlockchainNetworkEnum, FiatCurrency} from '@kitzen/data-transfer-objects';
 
 
 describe('print.tool', () => {
 
   let printTool: PrintTool;
   beforeEach(() => {
-    printTool = new PrintTool(getAssetMetadataObject('production'));
+    printTool = new PrintTool(getAssetMetadataObject('production'), () => 'en-US', () => 1, () => FiatCurrency.USD);
   });
 
   test('convertBigNumber', () => {

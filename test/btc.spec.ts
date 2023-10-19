@@ -13,7 +13,10 @@ describe('btc', () => {
     CryptoFactory.setBip39({
       mnemonicToSeed: mnemonicToSeedSync,
       generateMnemonic: async(...args) => generateMnemonic(...args),
-      validateMnemonic
+      validateMnemonic,
+      wordslist: {
+        'EN': ['word', 'let', 'give']
+      }
     });
     // @ts-ignore
     walletPrivateData.seed = new Buffer(walletPrivateData.seed.data);
