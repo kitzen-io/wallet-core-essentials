@@ -10,7 +10,7 @@ export interface BIP39API {
   mnemonicToSeed(mnemonic: string): Buffer;
   generateMnemonic(): Promise<string>;
   validateMnemonic(mnemonic: string, wordlist?: string[]): boolean;
-  wordslist: { [index: string]: string[] }
+  wordlists: { [index: string]: string[] }
 }
 
 export interface Address {

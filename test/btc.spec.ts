@@ -14,7 +14,7 @@ describe('btc', () => {
       mnemonicToSeed: mnemonicToSeedSync,
       generateMnemonic: async(...args) => generateMnemonic(...args),
       validateMnemonic,
-      wordslist: {
+      wordlists: {
         'EN': ['word', 'let', 'give']
       }
     });
