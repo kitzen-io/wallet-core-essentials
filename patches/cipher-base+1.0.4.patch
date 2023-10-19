@@ -8,3 +8,4 @@ index 6728005..fd5ada7 100644
 +var Transform = require('stream-browserify').Transform
  var StringDecoder = require('string_decoder').StringDecoder
  var inherits = require('inherits')
+ 
