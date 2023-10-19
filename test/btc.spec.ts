@@ -1,7 +1,8 @@
 import { CryptoFactory } from "../src";
 import {
   mnemonicToSeedSync,
-  generateMnemonic
+  generateMnemonic,
+    validateMnemonic
 } from "bip39";
 import walletPrivateData from './fixtures/wallet-private-data.json'
 import signTransactionInput from './fixtures/sign-transaction-input.json'
@@ -12,6 +13,7 @@ describe('btc', () => {
     CryptoFactory.setBip39({
       mnemonicToSeed: mnemonicToSeedSync,
       generateMnemonic: async(...args) => generateMnemonic(...args),
+      validateMnemonic
     });
     // @ts-ignore
     walletPrivateData.seed = new Buffer(walletPrivateData.seed.data);

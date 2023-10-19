@@ -23,7 +23,7 @@ import {
 } from '@kitzen/data-transfer-objects';
 
 import { Any } from 'google-protobuf/google/protobuf/any_pb.js';
-import { TransferContract } from '@tronscan/client/src/protocol/core/Contract_pb';
+import { TransferContract, TransferAssetContract } from '@tronscan/client/src/protocol/core/Contract_pb';
 import {
   SmartContract,
   Transaction,
@@ -36,7 +36,6 @@ import {
   SigningKey,
   toUtf8Bytes,
 } from 'ethers';
-
 
 export class Tron {
 
@@ -64,7 +63,7 @@ export class Tron {
   }
 
   public decodeContractData(value: DecodeContractDataParam): DecodeContractDataResult {
-    if (!value.data) {
+    if (!value.data && value.amount && value.to_address) {
       return {
         fromAddress: this.hexToBase58(value.owner_address),
         amount: BigInt(value.amount),
@@ -94,9 +93,11 @@ export class Tron {
     if (output.replace(/^0x/, '').length % 64) {
       throw new Error('The encoded string is not valid. Its length must be a multiple of 64.');
     }
+
     return abiCoder.decode(types, output).reduce((obj, arg, index) => {
       if (types[index] === 'address') {
-        arg = Tron.ADDRESS_PREFIX + arg.substr(2).toLowerCase();
+        arg = arg.replace(/^0x/, '')
+        arg = Tron.ADDRESS_PREFIX + arg.replace(/^41/,'').toLowerCase();
       }
       obj.push(arg);
       return obj;
@@ -165,7 +166,7 @@ export class Tron {
     // this method will create a transaction with required fields on Tron network
     // example of required fields can be checked in TronAPI
     // https://developers.tron.network/reference/broadcasttransaction
-    const transferContract = new TransferContract();
+    const transferContract = args.contractAddress ? new TransferAssetContract() : new TransferContract();
     transferContract.setToAddress(Uint8Array.from(decode58Check(args.to)));
     transferContract.setOwnerAddress(Uint8Array.from(decode58Check(args.from)));
     transferContract.setAmount(args.amount);
