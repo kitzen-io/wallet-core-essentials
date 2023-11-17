@@ -75,6 +75,14 @@ export class Btc   {
     };
   }
 
+  public validatePrivateKey(xprv: string): boolean {
+    try {
+      return !!this.bip32.fromBase58(xprv)
+    } catch {
+      return false
+    }
+  }
+
   public signMessage(message: string, derivePath: string, privateKeyBase58: string): string {
     const wif = this.bip32.fromBase58(privateKeyBase58, networks.bitcoin).derivePath(derivePath).toWIF();
     const keyPair = this.ecPair.fromWIF(wif);

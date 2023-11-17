@@ -52,5 +52,10 @@ describe('btc', () => {
     expect(result).toStrictEqual(walletPrivateData);
   });
 
+  test('validatePrivateKey', () => {
+    let btc = CryptoFactory.getBtc();
+    let result = btc.validatePrivateKey('xprv9s21ZrQH143K25usbyrE6MWu15UfzRtkWMx8rebreT1PKvJ8ecY4Uktr4hYdwHkBEBeYifvYwg2fkaGZmSZbFYfiPv1NDMfMqFPffrBn1d6')
+    expect(result).toBe(true);
+  });
 });
 
