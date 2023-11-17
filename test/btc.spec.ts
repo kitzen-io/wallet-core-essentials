@@ -18,8 +18,6 @@ describe('btc', () => {
         'EN': ['word', 'let', 'give']
       }
     });
-    // @ts-ignore
-    walletPrivateData.seed = new Buffer(walletPrivateData.seed.data);
   });
 
   test('calculateTransactionVirtualSize', () => {
@@ -42,9 +40,15 @@ describe('btc', () => {
     expect(result).toEqual('J+js9BiC8UUEOvh0g9poxq5Q97CvWzfVTmBEdM05KWlgASoVvVki0bwBQeFOW5JDeXPW8Ng0sb/joeIy6nGfs/M=');
   });
 
-  test('getWalletPrivateData', () => {
+  test('getWalletPrivateData with mnemonic', () => {
     let btc = CryptoFactory.getBtc();
     let result = btc.getWalletPrivateData('horn always soldier snake basic must mosquito entry tuition protect sustain mango')
+    expect(result).toStrictEqual(walletPrivateData);
+  });
+
+  test('getWalletPrivateData with private key', () => {
+    let btc = CryptoFactory.getBtc();
+    let result = btc.getWalletPrivateData('xprv9s21ZrQH143K25usbyrE6MWu15UfzRtkWMx8rebreT1PKvJ8ecY4Uktr4hYdwHkBEBeYifvYwg2fkaGZmSZbFYfiPv1NDMfMqFPffrBn1d6')
     expect(result).toStrictEqual(walletPrivateData);
   });
 
