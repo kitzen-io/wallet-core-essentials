@@ -37,9 +37,8 @@ export class Btc   {
   ) {
   }
 
-  public getWalletPrivateData(mnemonic: string, addressAmount = 10): WalletPrivateData {
-    const seed = this.bip39.mnemonicToSeed(mnemonic);
-    const privateKeyBase58 = this.bip32.fromSeed(seed).toBase58();
+  public getWalletPrivateData(secret: string, addressAmount = 10): WalletPrivateData {
+    const privateKeyBase58 = this.getPrivateKeyBase58FromSecret(secret)
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
@@ -69,7 +68,6 @@ export class Btc   {
     }
 
     return {
-      seed,
       privateKeyBase58,
       addressReceive,
       addressChange,
@@ -91,6 +89,14 @@ export class Btc   {
   //
   private getBTCAddress(wallet: BIP32Interface, network?: Network): string {
     return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
+  }
+
+  private getPrivateKeyBase58FromSecret(secret: string): string {
+    if (secret.includes(' ')) {
+      const seed = this.bip39.mnemonicToSeed(secret)
+      return this.bip32.fromSeed(seed).toBase58()
+    }
+    return secret
   }
 
   public getEcpair(path: string, privateKeyBase58: string): ECPairInterface {

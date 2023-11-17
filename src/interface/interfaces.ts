@@ -19,7 +19,6 @@ export interface Address {
 }
 
 export interface WalletPrivateData {
-  seed: Buffer;
   privateKeyBase58: string;
   privateKeyHex: string;
   addressReceive: Address[];
