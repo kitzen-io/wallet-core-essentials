@@ -8,9 +8,10 @@ import {
   IUserAuthVerifyMessageRequest,
 } from '@kitzen/data-transfer-objects';
 
-export function getPostAddressDto(data: WalletPrivateData, message: string): IUserAddressRequest {
+export async function getPostAddressDto(data: WalletPrivateData, message: string): Promise<IUserAddressRequest> {
   const trx = CryptoFactory.getTrx();
   const btc = CryptoFactory.getBtc();
+  const eth = CryptoFactory.getEth()
 
   const allAddresses: Omit<IAddressDto, 'message' | 'signature'> [] = [];
   allAddresses.push(...data.addressReceive.map((adr) => ({
@@ -35,16 +36,29 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): IUs
     })),
   };
 
-  const addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyTronHex);
+  const tronAddress = trx.getAddressFromPrivateKey(data.privateKeyTronHex);
+  const ethAddress = eth.getEthAddressFromPrivateKey(data.privateKeyEthBase58);
 
-  result.addresses.push(...addressFromPrivateKey.map((adr) => ({
+  const trxSignature = trx.signMessage(message, data.privateKeyTronHex)
+  const ethSignature = await eth.signMessage(message, data.privateKeyEthBase58)
+
+  const otherNetworksAddresses: IAddressDto[] = [...tronAddress.map((adr) => ({
     address: adr.address,
     network: BlockchainNetworkEnum.TRC10,
     type: AddressTypeEnum.RECEIVE,
     path: adr.derivePath,
     message,
-    signature: trx.signMessage(message, data.privateKeyTronHex),
-  })));
+    signature: trxSignature,
+  })), ...ethAddress.map((adr) => ({
+    address: adr.address,
+    network: BlockchainNetworkEnum.ETH,
+    type: AddressTypeEnum.RECEIVE,
+    path: adr.derivePath,
+    message,
+    signature: ethSignature,
+  }))]
+
+  result.addresses.push(...otherNetworksAddresses);
 
   return result;
 }
