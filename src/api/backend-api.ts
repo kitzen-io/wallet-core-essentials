@@ -35,7 +35,7 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): IUs
     })),
   };
 
-  let addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyHex);
+  const addressFromPrivateKey = trx.getAddressFromPrivateKey(data.privateKeyTronHex);
 
   result.addresses.push(...addressFromPrivateKey.map((adr) => ({
     address: adr.address,
@@ -43,7 +43,7 @@ export function getPostAddressDto(data: WalletPrivateData, message: string): IUs
     type: AddressTypeEnum.RECEIVE,
     path: adr.derivePath,
     message,
-    signature: trx.signMessage(message, data.privateKeyHex),
+    signature: trx.signMessage(message, data.privateKeyTronHex),
   })));
 
   return result;
