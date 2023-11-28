@@ -28,6 +28,7 @@ import {
   TransactionErrorsEnum,
 } from '@kitzen/data-transfer-objects';
 import { validate } from 'bitcoin-address-validation';
+import {ethers} from "ethers";
 
 export class Btc   {
   public constructor(
@@ -45,8 +46,9 @@ export class Btc   {
     const addressReceive: Address[] = [];
     const addressChange: Address[] = [];
 
-    let bip32Interface = wallet.derivePath("m/44'/195'/0'/0/0");
-    const privateKeyHex = bip32Interface.privateKey!.toString('hex');
+    const bip32TronInterface = wallet.derivePath("m/44'/195'/0'/0/0");
+    const privateKeyTronHex = bip32TronInterface.privateKey!.toString('hex');
+    const privateKeyEthBase58 = ethers.HDNodeWallet.fromPhrase(secret).extendedKey
 
     for (let i = 0; i < addressAmount; i++) {
       const address1 = this.getBTCAddress(wallet.derivePath(`m/84'/0'/0'/0/${i}`));
@@ -71,7 +73,8 @@ export class Btc   {
       privateKeyBase58,
       addressReceive,
       addressChange,
-      privateKeyHex,
+      privateKeyTronHex,
+      privateKeyEthBase58
     };
   }
 

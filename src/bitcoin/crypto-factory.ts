@@ -5,6 +5,7 @@ import { ecc } from './ecc';
 import { Btc } from './btc';
 import { BIP39API } from '../interface/interfaces';
 import { Tron } from '../tron/trx';
+import {Ethereum} from "../eth/eth";
 
 
 export class CryptoFactory {
@@ -14,12 +15,20 @@ export class CryptoFactory {
 
   private static tronWeb?: Tron;
 
+  private static eth?: Ethereum
+
 
   public static getTrx(): Tron {
     if (!CryptoFactory.tronWeb) {
       CryptoFactory.tronWeb = new Tron();
     }
     return CryptoFactory.tronWeb;
+  }
+  public static getEth(): Ethereum {
+    if (!CryptoFactory.eth) {
+      CryptoFactory.eth = new Ethereum()
+    }
+    return CryptoFactory.eth
   }
 
   public static setBip39(bip39: BIP39API): void {
