@@ -70,7 +70,7 @@ export class Btc   {
     }
 
     return {
-      privateKeyBase58: privateKeyBase58,
+      privateKeyBase58,
       addressReceive,
       addressChange,
       privateKeyTronHex,
