@@ -11,7 +11,7 @@ import {
 export async function getPostAddressDto(data: WalletPrivateData, message: string): Promise<IUserAddressRequest> {
   const trx = CryptoFactory.getTrx();
   const btc = CryptoFactory.getBtc();
-  const eth = CryptoFactory.getEth()
+  const eth = CryptoFactory.getEth();
 
   const allAddresses: Omit<IAddressDto, 'message' | 'signature'> [] = [];
   allAddresses.push(...data.addressReceive.map((adr) => ({

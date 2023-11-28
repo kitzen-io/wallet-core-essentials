@@ -39,7 +39,7 @@ export class Btc   {
   }
 
   public getWalletPrivateData(secret: string, addressAmount = 10): WalletPrivateData {
-    const privateKeyBase58 = this.getPrivateKeyBase58FromSecret(secret)
+    const privateKeyBase58 = this.getMasterPrivateKeyBase58FromSecret(secret)
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
@@ -48,7 +48,7 @@ export class Btc   {
 
     const bip32TronInterface = wallet.derivePath("m/44'/195'/0'/0/0");
     const privateKeyTronHex = bip32TronInterface.privateKey!.toString('hex');
-    const privateKeyEthBase58 = ethers.HDNodeWallet.fromPhrase(secret).extendedKey
+    const privateKeyEthBase58 = this.getEthPrivateKeyBase58FromSecret(privateKeyBase58)
 
     for (let i = 0; i < addressAmount; i++) {
       const address1 = this.getBTCAddress(wallet.derivePath(`m/84'/0'/0'/0/${i}`));
@@ -102,12 +102,16 @@ export class Btc   {
     return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
   }
 
-  private getPrivateKeyBase58FromSecret(secret: string): string {
+  private getMasterPrivateKeyBase58FromSecret(secret: string): string {
     if (secret.includes(' ')) {
       const seed = this.bip39.mnemonicToSeed(secret)
       return this.bip32.fromSeed(seed).toBase58()
     }
     return secret
+  }
+
+  private getEthPrivateKeyBase58FromSecret(masterKey: string): string {
+    return ethers.HDNodeWallet.fromExtendedKey(masterKey).derivePath("m/44'/60'/0'/0").extendedKey
   }
 
   public getEcpair(path: string, privateKeyBase58: string): ECPairInterface {
