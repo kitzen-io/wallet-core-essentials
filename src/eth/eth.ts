@@ -8,6 +8,6 @@ export class Ethereum {
     }
 
     public async signMessage(message: string, privateKey: string): Promise<string> {
-        return await ethers.HDNodeWallet.fromExtendedKey(privateKey).signMessage(message)
+        return await ethers.HDNodeWallet.fromExtendedKey(privateKey).derivePath("0").signMessage(message)
     }
 }
