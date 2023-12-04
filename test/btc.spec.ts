@@ -37,7 +37,7 @@ describe('btc', () => {
   test('signMessage', () => {
     let btc = CryptoFactory.getBtc();
     let result = btc.signMessage('cd119e94-e2f2-4914-abd1-1cd004410b1a', "m/84'/0'/0'/0/0", privateKeyBase58)
-    expect(result).toEqual('J+js9BiC8UUEOvh0g9poxq5Q97CvWzfVTmBEdM05KWlgASoVvVki0bwBQeFOW5JDeXPW8Ng0sb/joeIy6nGfs/M=');
+    expect(result).toEqual('KIfdJckxYYq1TeW3Vk4DP79Q8+aOrHz1HQStrbktRiaRSLUocaUrGjGM3Hl+qm9wCr+TYEAigOMO3NfIqECjTyM=');
   });
 
   test('getWalletPrivateData with mnemonic', () => {
