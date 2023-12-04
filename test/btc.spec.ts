@@ -48,13 +48,13 @@ describe('btc', () => {
 
   test('getWalletPrivateData with private key', () => {
     let btc = CryptoFactory.getBtc();
-    let result = btc.getWalletPrivateData('xprv9s21ZrQH143K25usbyrE6MWu15UfzRtkWMx8rebreT1PKvJ8ecY4Uktr4hYdwHkBEBeYifvYwg2fkaGZmSZbFYfiPv1NDMfMqFPffrBn1d6')
+    let result = btc.getWalletPrivateData(privateKeyBase58)
     expect(result).toStrictEqual(walletPrivateData);
   });
 
   test('validatePrivateKey', () => {
     let btc = CryptoFactory.getBtc();
-    let result = btc.validatePrivateKey('xprv9s21ZrQH143K25usbyrE6MWu15UfzRtkWMx8rebreT1PKvJ8ecY4Uktr4hYdwHkBEBeYifvYwg2fkaGZmSZbFYfiPv1NDMfMqFPffrBn1d6')
+    let result = btc.validatePrivateKey(privateKeyBase58)
     expect(result).toBe(true);
   });
 });
