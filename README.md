@@ -56,6 +56,23 @@ CryptoFactory.setBip39({
 });
 ```
 
+## Library usage
+
+You can access docs by themes here:
+- [CryptoFactory](docs/crypto-factory.md)
+- [Btc](docs/btc.md)
+- [Eth](docs/eth.md)
+- [Trx](docs/trx.md)
+- [Interfaces](docs/interfaces.md)
+- [Tools](docs/tools.md)
+- [Backend Api](docs/backend-api.md)
+
+## Testing
+
+Library provides whole spectre of tests that occupies majority of cases that could happen or used in development.
+You can explore tests [here](test)
+
+
 ## Tron hex message decode
 
 There are 2 types of messages: with signature and without signature.
