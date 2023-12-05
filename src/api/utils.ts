@@ -7,6 +7,8 @@ export function getTransactionExplorerUrl(id: string, network: BlockchainNetwork
     case BlockchainNetworkEnum.TRC20:
     case BlockchainNetworkEnum.TRC10:
       return `https://tronscan.org/#/transaction/${id}`;
+    case BlockchainNetworkEnum.ETH:
+      return `https://etherscan.io/tx/${id}`
     default:
       throw Error(`Unsupported network ${network}`);
   }
