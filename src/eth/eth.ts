@@ -1,6 +1,5 @@
-import {Contract, ethers, TransactionRequest} from "ethers";
+import {ethers, TransactionRequest} from "ethers";
 import {Address} from "../interface/interfaces";
-import ERC20_ABI from './erc20.abi.json'
 
 export class Ethereum {
 
@@ -13,15 +12,8 @@ export class Ethereum {
         return await ethers.HDNodeWallet.fromExtendedKey(privateKey).derivePath("0").signMessage(message);
     }
 
-    public async signTransaction(privateKey: string, tx: TransactionRequest, erc20ContractAddress?: string): Promise<string> {
+    public async signTransaction(privateKey: string, tx: TransactionRequest): Promise<string> {
         const signer = ethers.HDNodeWallet.fromExtendedKey(privateKey)
-
-        if (erc20ContractAddress) {
-            const contract = new Contract(erc20ContractAddress, ERC20_ABI)
-
-            const data = contract.interface.encodeFunctionData("transfer", [tx.to, tx.value])
-            return  signer.signTransaction({...tx, data})
-        }
 
         return signer.signTransaction(tx)
     }
