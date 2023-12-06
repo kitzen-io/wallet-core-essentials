@@ -55,4 +55,12 @@ describe('Ethereum', () => {
             expect(tx).toStrictEqual(linkTx)
         })
     })
+
+    describe('validateAddress', () => {
+        it('should validate address', async () => {
+            const isValid = ethereum.validateAddress(ethToAddress)
+
+            expect(isValid).toBe(true)
+        })
+    })
 });

@@ -20,9 +20,17 @@ export class Ethereum {
             const contract = new Contract(erc20ContractAddress, ERC20_ABI)
 
             const data = contract.interface.encodeFunctionData("transfer", [tx.to, tx.value])
-            return  signer.signTransaction({...tx, data})
+            return signer.signTransaction({...tx, data})
         }
 
         return signer.signTransaction(tx)
+    }
+
+    public validateAddress(address: string): boolean {
+        try {
+            return !!ethers.getAddress(address)
+        } catch {
+            return false
+        }
     }
 }
