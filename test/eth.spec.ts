@@ -1,6 +1,6 @@
 import {Ethereum} from "../src/eth/eth";
 import {ethers} from "ethers";
-import {ethMessage, ethPrivateKey, ethSignature, ethToAddress, ethTx} from "./fixtures/consts";
+import {ethMessage, ethPrivateKey, ethSignature, ethToAddress, ethTx, linkTx} from "./fixtures/consts";
 
 
 describe('Ethereum', () => {
@@ -34,14 +34,25 @@ describe('Ethereum', () => {
         })
     })
 
-    describe('signTransaction', () => {
-        it('should sign transaction', async () => {
+    describe('signTransaction ETH', () => {
+        it('should sign eth transaction', async () => {
             const tx = await ethereum.signTransaction(ethPrivateKey,{
                 to: ethToAddress,
                 value: ethers.parseUnits("0", "ether")
             })
 
             expect(tx).toStrictEqual(ethTx)
+        })
+    })
+
+    describe('signTransaction LINK', () => {
+        it ('should sign link transaction', async () => {
+            const tx = await ethereum.signTransaction(ethPrivateKey,{
+                to: ethToAddress,
+                value: ethers.parseUnits("0", "ether")
+            },  "0x326C977E6efc84E512bB9C30f76E30c160eD06FB")
+
+            expect(tx).toStrictEqual(linkTx)
         })
     })
 });
