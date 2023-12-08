@@ -14,7 +14,7 @@ export class Ethereum {
     }
 
     public async signTransaction(privateKey: string, tx: TransactionRequest, erc20ContractAddress?: string): Promise<string> {
-        const signer = ethers.HDNodeWallet.fromExtendedKey(privateKey)
+        const signer = ethers.HDNodeWallet.fromExtendedKey(privateKey).derivePath('0')
 
         if (erc20ContractAddress) {
             const contract = new Contract(erc20ContractAddress, ERC20_ABI)
