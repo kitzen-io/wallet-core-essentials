@@ -1,4 +1,4 @@
-import {Contract, ethers, TransactionRequest} from "ethers";
+import {BigNumberish, Contract, ethers, TransactionRequest} from "ethers";
 import {Address} from "../interface/interfaces";
 import ERC20_ABI from './erc20.abi.json'
 
@@ -32,5 +32,9 @@ export class Ethereum {
         } catch {
             return false
         }
+    }
+
+    public getGasInEth = (gas: BigNumberish, gasLimit: number) => {
+        return Number(ethers.formatUnits(gas, 'ether')) * gasLimit
     }
 }

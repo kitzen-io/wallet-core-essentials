@@ -37,8 +37,14 @@ describe('Ethereum', () => {
     describe('signTransaction ETH', () => {
         it('should sign eth transaction', async () => {
             const tx = await ethereum.signTransaction(ethPrivateKey,{
-                to: ethToAddress,
-                value: ethers.parseUnits("0", "ether")
+                from: "0xE704aa04CDE541bDEA56933434bEBC101b855132",
+                to: "0x7cb96d606F6d33C8811168ceB7A80c909d00CF29",
+                value: "0",
+                chainId: 0x1,
+                "maxFeePerGas": "74831204321",
+                "maxPriorityFeePerGas": "38259235",
+                gasLimit: 21000,
+                nonce: 1
             })
 
             expect(tx).toStrictEqual(ethTx)
@@ -48,8 +54,14 @@ describe('Ethereum', () => {
     describe('signTransaction LINK', () => {
         it ('should sign link transaction', async () => {
             const tx = await ethereum.signTransaction(ethPrivateKey,{
-                to: ethToAddress,
-                value: ethers.parseUnits("0", "ether")
+                from: "0xE704aa04CDE541bDEA56933434bEBC101b855132",
+                to: "0x7cb96d606F6d33C8811168ceB7A80c909d00CF29",
+                value: "0",
+                chainId: 0x1,
+                "maxFeePerGas": "74831204321",
+                "maxPriorityFeePerGas": "38259235",
+                gasLimit: 21000,
+                nonce: 1
             },  "0x326C977E6efc84E512bB9C30f76E30c160eD06FB")
 
             expect(tx).toStrictEqual(linkTx)
@@ -61,6 +73,13 @@ describe('Ethereum', () => {
             const isValid = ethereum.validateAddress(ethToAddress)
 
             expect(isValid).toBe(true)
+        })
+    })
+    describe('getGasInEth', () => {
+        it('should convert gas to eth number', async () => {
+            const eth = ethereum.getGasInEth(27976924723, 21000)
+
+            expect(eth).toBe(0.000587515419183)
         })
     })
 });
