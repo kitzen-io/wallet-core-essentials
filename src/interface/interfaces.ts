@@ -98,3 +98,11 @@ export interface EstimateTransactionFeeProps {
   amount: string;
 }
 
+export type EthContractParams = {
+  address: string;
+  method?: string;
+  props?: any[];
+  abi?: any;
+  transferValue?: bigint
+}
+
