@@ -22,7 +22,7 @@ export class Ethereum {
             const contract = new Contract(erc20Contract.address, params.abi)
 
             const data = contract.interface.encodeFunctionData(params.method, params.props)
-            return signer.signTransaction({value: params?.transferValue, ...tx, data })
+            return signer.signTransaction({ ...tx, to: erc20Contract.address, data })
         }
 
         return signer.signTransaction(tx)

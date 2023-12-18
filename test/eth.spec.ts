@@ -70,10 +70,13 @@ describe('Ethereum', () => {
     })
 
     describe('signTransaction Escrow', () => {
-        it ('should sign link transaction', async () => {
+        it ('should sign escrow transaction', async () => {
+            const value = ethers.parseEther('0.000001')
+            const fee = BigInt(Number(value) * (25 / 10000)) // Calculating value to pay + half platform fee (50(0.5%) / 2 = 25(0.25%))
+
             const tx = await ethereum.signTransaction(ethPrivateKey,{
                 from: "0xE704aa04CDE541bDEA56933434bEBC101b855132",
-                to: "0x7cb96d606F6d33C8811168ceB7A80c909d00CF29",
+                value: value + fee, // This value must be the same as value in contract parameters + half platform fee
                 chainId: 0x1,
                 "maxFeePerGas": "74831204321",
                 "maxPriorityFeePerGas": "38259235",
@@ -91,7 +94,6 @@ describe('Ethereum', () => {
                     0, // Payment window in seconds, time during seller can't cancel trade
                 ],
                 method: 'createEscrow', // Method of function in contract
-                transferValue: ethers.parseEther('0.000001') // Value to transfer, must be the same as in props, in Wei
             })
 
             expect(tx).toStrictEqual(escrowTx)

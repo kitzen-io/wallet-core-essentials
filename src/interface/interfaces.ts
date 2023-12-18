@@ -5,6 +5,7 @@ import {
   ITronGetBlockResponse,
   IUnspentTransaction,
 } from '@kitzen/data-transfer-objects';
+import {BigNumberish} from "ethers";
 
 export interface BIP39API {
   mnemonicToSeed(mnemonic: string): Buffer;
@@ -101,8 +102,7 @@ export interface EstimateTransactionFeeProps {
 export type EthContractParams = {
   address: string;
   method?: string;
-  props?: any[];
+  props?: [string, string, string, BigNumberish, number, number];
   abi?: any;
-  transferValue?: bigint
 }
 
