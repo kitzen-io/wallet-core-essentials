@@ -765,10 +765,10 @@
   resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.21.tgz#633564acb6aad5dbf1c003da1aa50598e53ae0e0"
   integrity sha512-uH7uyvei9WPLYq+78cu0DpvBE2GGsy+Q51CstycfPoiKEJnDwgKoo9yIVioPJ4zeUnfcmR/Jv8SJ1L9T/8iwIw==
 
-"@kitzen/data-transfer-objects@^1.0.57":
-  version "1.0.60"
-  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.60.tgz#a190574e04ce36d63dca6dc60680cf2f5b21d3d4"
-  integrity sha512-P+0nT3m5OooZvGP5fuBse8ELNO5VDLZTtgnDxyc+wfAY17EkIe4pSU8CsYj39vJidG1PIshNpRNIRFXChLWFgQ==
+"@kitzen/data-transfer-objects@^1.0.61":
+  version "1.0.70"
+  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.70.tgz#557bc8fc06fb95b43f3e87e69f721eb7454cb314"
+  integrity sha512-DZPdNaGiTNbQh2xQp1Zv3rx0aWNOxL5IPjd4Ek3ZkNW0SSoAFV7eKMm98E3ueo1ChpMAXf5OOP2whEDSUxiCTQ==
 
 "@noble/curves@1.1.0", "@noble/curves@~1.1.0":
   version "1.1.0"
