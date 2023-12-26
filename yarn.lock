@@ -770,6 +770,11 @@
   resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.60.tgz#a190574e04ce36d63dca6dc60680cf2f5b21d3d4"
   integrity sha512-P+0nT3m5OooZvGP5fuBse8ELNO5VDLZTtgnDxyc+wfAY17EkIe4pSU8CsYj39vJidG1PIshNpRNIRFXChLWFgQ==
 
+"@kitzen/escrow-contract@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@kitzen/escrow-contract/-/escrow-contract-1.1.2.tgz#4b04906ebd78a4bcf07fa843ca93a9aa0a96bf40"
+  integrity sha512-vtK/3VM4SYEtUsPtWZCY03vhJkT54PnCDDa22TLDYIrGbWNKxvjO95Ru2LKNEm+g3lZRgPJ+x782zLO4tI8l3Q==
+
 "@noble/curves@1.1.0", "@noble/curves@~1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.1.0.tgz#f13fc667c89184bc04cccb9b11e8e7bae27d8c3d"

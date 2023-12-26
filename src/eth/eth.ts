@@ -39,4 +39,26 @@ export class Ethereum {
     public getGasInEth = (gas: BigNumberish, gasLimit: number) => {
         return Number(ethers.formatUnits(gas, 'ether')) * gasLimit
     }
+
+    public decodeTransaction = (hash: string, contract?: { abi: any, method: string }) => {
+        const tx = ethers.Transaction.from(hash)
+        const result: { transaction: ethers.Transaction, data?: any } = {
+            transaction: tx.toJSON(),
+        }
+        if (contract) {
+            const data = {}
+
+            const abiCoder = new ethers.Interface(contract.abi)
+            const methodInputs = JSON.parse(abiCoder.formatJson()).find(obj => obj.name === 'createEscrow').inputs
+            const decodedData = abiCoder.decodeFunctionData(contract.method, tx.data)
+
+            methodInputs.forEach(({ name }, idx) => {
+                data[name.slice(1)] = decodedData[idx];
+            })
+
+            result.data = data
+        }
+
+        return result
+    }
 }

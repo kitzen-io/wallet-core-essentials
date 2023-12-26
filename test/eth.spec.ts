@@ -1,7 +1,7 @@
 import {Ethereum} from "../src/eth/eth";
 import {ethers} from "ethers";
-import {escrowTx, ethMessage, ethPrivateKey, ethSignature, ethToAddress, ethTx, usdcTx} from "./fixtures/consts";
-import ESCROW_ABI from './fixtures/escrow-abi.json'
+import {decodedEscrowTransaction, escrowTx, ethMessage, ethPrivateKey, ethSignature, ethToAddress, ethTx, usdcTx} from "./fixtures/consts";
+import {ESCROW_ABI} from "@kitzen/escrow-contract";
 
 
 describe('Ethereum', () => {
@@ -113,6 +113,13 @@ describe('Ethereum', () => {
             const eth = ethereum.getGasInEth(27976924723, 21000)
 
             expect(eth).toBe(0.000587515419183)
+        })
+    })
+
+    describe('decodeTransaction', () => {
+        it('should decode transaction', () => {
+            const result = ethereum.decodeTransaction(escrowTx, { abi: ESCROW_ABI, method: 'createEscrow' })
+            expect(result).toStrictEqual(decodedEscrowTransaction)
         })
     })
 });
