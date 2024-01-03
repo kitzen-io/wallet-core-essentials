@@ -17,7 +17,7 @@ export class Ethereum {
         const signer = ethers.HDNodeWallet.fromExtendedKey(privateKey).derivePath('0')
 
         if (erc20Contract) {
-            const params = { method: 'transfer', props: [tx.to, tx.value], abi: ERC20_ABI, ...erc20Contract }
+            const params = { abi: ERC20_ABI, ...erc20Contract }
 
             const contract = new Contract(erc20Contract.address, params.abi)
 

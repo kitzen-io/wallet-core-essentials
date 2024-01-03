@@ -63,7 +63,7 @@ describe('Ethereum', () => {
                 "maxPriorityFeePerGas": "38259235",
                 gasLimit: 21000,
                 nonce: 1
-            },  { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' })
+            },  { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', props: ['0x7cb96d606F6d33C8811168ceB7A80c909d00CF29', ethers.parseUnits('1', 9)], method: 'transfer' })
 
             expect(tx).toStrictEqual(usdcTx)
         })

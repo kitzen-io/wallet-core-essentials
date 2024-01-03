@@ -100,8 +100,8 @@ export interface EstimateTransactionFeeProps {
 
 export type EthContractParams = {
   address: string;
-  method?: string;
-  props?: any[];
+  method: string;
+  props: any[];
   abi?: any;
 }
 
