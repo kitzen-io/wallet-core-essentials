@@ -43,36 +43,15 @@ export class Btc   {
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
-    const addressReceive: Address[] = [];
-    const addressChange: Address[] = [];
+    const publicKeyBase58 = wallet.derivePath("m/84'/0'/0'/0").neutered().toBase58();
 
     const bip32TronInterface = wallet.derivePath("m/44'/195'/0'/0/0");
     const privateKeyTronHex = bip32TronInterface.privateKey!.toString('hex');
     const privateKeyEthBase58 = this.getEthPrivateKeyBase58FromSecret(privateKeyBase58)
 
-    for (let i = 0; i < addressAmount; i++) {
-      const address1 = this.getBTCAddress(wallet.derivePath(`m/84'/0'/0'/0/${i}`));
-      const address2 = this.getBTCAddress(wallet.derivePath(`m/84'/0'/0'/1/${i}`));
-
-      if (address1) {
-        addressReceive.push({
-          address: address1,
-          derivePath: `m/84'/0'/0'/0/${i}`,
-        });
-      }
-
-      if (address2) {
-        addressChange.push({
-          address: address2,
-          derivePath: `m/84'/0'/0'/1/${i}`,
-        });
-      }
-    }
-
     return {
+      publicKeyBase58,
       privateKeyBase58,
-      addressReceive,
-      addressChange,
       privateKeyTronHex,
       privateKeyEthBase58
     };
@@ -98,7 +77,9 @@ export class Btc   {
   //   return this.ecPair.fromPublicKey(pubkey).verify(msghash, signature);
   // }
   //
-  private getBTCAddress(wallet: BIP32Interface, network?: Network): string {
+  public getBTCAddress(pubkey: string, network?: Network): string {
+    const wallet = this.bip32.fromBase58(pubkey);
+
     return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
   }
 

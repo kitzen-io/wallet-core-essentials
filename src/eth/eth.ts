@@ -4,7 +4,7 @@ import ERC20_ABI from './erc20.abi.json'
 
 export class Ethereum {
 
-    public getEthAddressFromPrivateKey(privateKey: string): [Address] {
+    public getAddressFromPrivateKey(privateKey: string): [Address] {
         const address = ethers.HDNodeWallet.fromExtendedKey(privateKey).derivePath("0").address
         return [{ address, derivePath: "m/44'/60'/0'/0/0" }]
     }
@@ -49,7 +49,7 @@ export class Ethereum {
             const data = {}
 
             const abiCoder = new ethers.Interface(contract.abi)
-            const methodInputs = JSON.parse(abiCoder.formatJson()).find(obj => obj.name === 'createEscrow').inputs
+            const methodInputs = JSON.parse(abiCoder.formatJson()).find(obj => obj.name === contract.method).inputs
             const decodedData = abiCoder.decodeFunctionData(contract.method, tx.data)
 
             methodInputs.forEach(({ name }, idx) => {
