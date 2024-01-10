@@ -54,7 +54,7 @@ export class Btc   {
     };
   }
 
-  public validatePrivateKey(xprv: string): boolean {
+  public validatePrvPubKey(xprv: string): boolean {
     try {
       return !!this.bip32.fromBase58(xprv)
     } catch {
