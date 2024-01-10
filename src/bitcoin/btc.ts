@@ -1,7 +1,5 @@
-// import { IBip32Derivation } from '@prominence-group/common-lib/web';
 import {
   BIP32API,
-  BIP32Interface,
 } from 'bip32';
 import type { Transaction } from 'bitcoinjs-lib';
 import {
@@ -16,7 +14,6 @@ import {
   ECPairInterface,
 } from 'ecpair';
 import {
-  Address,
   BIP39API,
   CreateTransactionInput,
   WalletPrivateData,
@@ -38,7 +35,7 @@ export class Btc   {
   ) {
   }
 
-  public getWalletPrivateData(secret: string, addressAmount = 10): WalletPrivateData {
+  public getWalletPrivateData(secret: string): WalletPrivateData {
     const privateKeyBase58 = this.getMasterPrivateKeyBase58FromSecret(secret)
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
@@ -77,8 +74,8 @@ export class Btc   {
   //   return this.ecPair.fromPublicKey(pubkey).verify(msghash, signature);
   // }
   //
-  public getBTCAddress(pubkey: string, network?: Network): string {
-    const wallet = this.bip32.fromBase58(pubkey);
+  public getBTCAddress(pubkey: string, index: string, network?: Network): string {
+    const wallet = this.bip32.fromBase58(pubkey).derivePath(index);
 
     return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
   }
