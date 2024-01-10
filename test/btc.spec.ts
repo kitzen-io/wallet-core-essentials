@@ -54,7 +54,7 @@ describe('btc', () => {
 
   test('validatePrivateKey', () => {
     let btc = CryptoFactory.getBtc();
-    let result = btc.validatePrivateKey(privateKeyBase58)
+    let result = btc.validatePrvPubKey(privateKeyBase58)
     expect(result).toBe(true);
   });
 });

@@ -1,7 +1,5 @@
-// import { IBip32Derivation } from '@prominence-group/common-lib/web';
 import {
   BIP32API,
-  BIP32Interface,
 } from 'bip32';
 import type { Transaction } from 'bitcoinjs-lib';
 import {
@@ -16,7 +14,6 @@ import {
   ECPairInterface,
 } from 'ecpair';
 import {
-  Address,
   BIP39API,
   CreateTransactionInput,
   WalletPrivateData,
@@ -38,47 +35,26 @@ export class Btc   {
   ) {
   }
 
-  public getWalletPrivateData(secret: string, addressAmount = 10): WalletPrivateData {
+  public getWalletPrivateData(secret: string): WalletPrivateData {
     const privateKeyBase58 = this.getMasterPrivateKeyBase58FromSecret(secret)
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
-    const addressReceive: Address[] = [];
-    const addressChange: Address[] = [];
+    const publicKeyBase58 = wallet.derivePath("m/84'/0'/0'/0").neutered().toBase58();
 
     const bip32TronInterface = wallet.derivePath("m/44'/195'/0'/0/0");
     const privateKeyTronHex = bip32TronInterface.privateKey!.toString('hex');
     const privateKeyEthBase58 = this.getEthPrivateKeyBase58FromSecret(privateKeyBase58)
 
-    for (let i = 0; i < addressAmount; i++) {
-      const address1 = this.getBTCAddress(wallet.derivePath(`m/84'/0'/0'/0/${i}`));
-      const address2 = this.getBTCAddress(wallet.derivePath(`m/84'/0'/0'/1/${i}`));
-
-      if (address1) {
-        addressReceive.push({
-          address: address1,
-          derivePath: `m/84'/0'/0'/0/${i}`,
-        });
-      }
-
-      if (address2) {
-        addressChange.push({
-          address: address2,
-          derivePath: `m/84'/0'/0'/1/${i}`,
-        });
-      }
-    }
-
     return {
+      publicKeyBase58,
       privateKeyBase58,
-      addressReceive,
-      addressChange,
       privateKeyTronHex,
       privateKeyEthBase58
     };
   }
 
-  public validatePrivateKey(xprv: string): boolean {
+  public validatePrvPubKey(xprv: string): boolean {
     try {
       return !!this.bip32.fromBase58(xprv)
     } catch {
@@ -98,7 +74,9 @@ export class Btc   {
   //   return this.ecPair.fromPublicKey(pubkey).verify(msghash, signature);
   // }
   //
-  private getBTCAddress(wallet: BIP32Interface, network?: Network): string {
+  public getBTCAddress(pubkey: string, index: string, network?: Network): string {
+    const wallet = this.bip32.fromBase58(pubkey).derivePath(index);
+
     return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
   }
 

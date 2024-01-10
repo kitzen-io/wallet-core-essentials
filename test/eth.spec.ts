@@ -12,9 +12,9 @@ describe('Ethereum', () => {
         ethereum = new Ethereum();
     });
 
-    describe('getEthAddressFromPrivateKey', () => {
+    describe('getAddressFromPrivateKey', () => {
         it('should return the correct address', () => {
-            const address = ethereum.getEthAddressFromPrivateKey(ethPrivateKey);
+            const address = ethereum.getAddressFromPrivateKey(ethPrivateKey);
             expect(address).toStrictEqual([{address: "0xE704aa04CDE541bDEA56933434bEBC101b855132", derivePath: "m/44'/60'/0'/0/0"}]);
         });
     });
@@ -29,7 +29,7 @@ describe('Ethereum', () => {
     describe('verifyAddress', () => {
         it('should validate address', async () => {
             const verifiedAddress = ethers.verifyMessage(ethMessage,ethSignature)
-            const address = ethereum.getEthAddressFromPrivateKey(ethPrivateKey);
+            const address = ethereum.getAddressFromPrivateKey(ethPrivateKey);
 
             expect(verifiedAddress).toBe(address[0].address)
         })
