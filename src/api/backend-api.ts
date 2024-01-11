@@ -8,12 +8,13 @@ import {
   IUserAuthVerifyMessageRequest,
 } from '@kitzen/data-transfer-objects';
 
-export async function getPostAddressDto(data: WalletPrivateData, message: string): Promise<Omit<IUserAddressRequest, 'pubkey'>> {
+export async function getPostAddressDto(data: WalletPrivateData, message: string): Promise<IUserAddressRequest> {
   const trx = CryptoFactory.getTrx();
   const eth = CryptoFactory.getEth();
 
-  const result: Omit<IUserAddressRequest, 'pubkey'> = {
+  const result: IUserAddressRequest = {
     addresses: [],
+    pubkey: data.publicKeyBase58,
   };
 
   const tronAddress = trx.getAddressFromPrivateKey(data.privateKeyTronHex);
@@ -46,7 +47,7 @@ export async function getPostAddressDto(data: WalletPrivateData, message: string
 export function getVerifyMessageDto(data: WalletPrivateData, message: string): IUserAuthVerifyMessageRequest {
   const btc = CryptoFactory.getBtc();
 
-  const masterAddress = btc.getBTCAddress(data.publicKeyBase58, '0');
+  const masterAddress = btc.getBTCAddress(data.publicKeyBase58);
   const btcMasterDerivePath = "m/84'/0'/0'/0/0"
 
   return {

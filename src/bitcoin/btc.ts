@@ -3,11 +3,10 @@ import {
 } from 'bip32';
 import type { Transaction } from 'bitcoinjs-lib';
 import {
-  Network,
   networks,
-  payments,
   Psbt,
 } from 'bitcoinjs-lib';
+import BIP84 from 'bip84'
 import * as bitcoinMessage from 'bitcoinjs-message';
 import {
   ECPairAPI,
@@ -91,10 +90,8 @@ export class Btc   {
   //   return this.ecPair.fromPublicKey(pubkey).verify(msghash, signature);
   // }
   //
-  public getBTCAddress(pubkey: string, index: string, network?: Network): string {
-    const wallet = this.bip32.fromBase58(pubkey).derivePath(index);
-
-    return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
+  public getBTCAddress(pubkey: string, index: number = 0,): string {
+    return new BIP84.fromZPub(pubkey).getAddress(index);
   }
 
   private getMasterPrivateKeyBase58FromSecret(secret: string): string {
