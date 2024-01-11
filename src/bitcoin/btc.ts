@@ -26,6 +26,7 @@ import {
 } from '@kitzen/data-transfer-objects';
 import { validate } from 'bitcoin-address-validation';
 import {ethers} from "ethers";
+import b58 from 'bs58check'
 
 export class Btc   {
   public constructor(
@@ -40,7 +41,9 @@ export class Btc   {
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
-    const publicKeyBase58 = wallet.derivePath("m/84'/0'/0'/0").neutered().toBase58();
+    const xpub = wallet.derivePath("m/84'/0'/0'/0").neutered().toBase58();
+
+    const publicKeyBase58 = this.convertXpub(xpub);
 
     const bip32TronInterface = wallet.derivePath("m/44'/195'/0'/0/0");
     const privateKeyTronHex = bip32TronInterface.privateKey!.toString('hex');
@@ -59,6 +62,20 @@ export class Btc   {
       return !!this.bip32.fromBase58(xprv)
     } catch {
       return false
+    }
+  }
+
+  private convertXpub(xpub) {
+    xpub = xpub.trim();
+
+    const zpubPrefix = '04b24746'
+    try {
+      var data = b58.decode(xpub);
+      data = data.slice(4);
+      data = Buffer.concat([Buffer.from(zpubPrefix,'hex'), data]);
+      return b58.encode(data);
+    } catch (err) {
+      return "Invalid extended public key! Please double check that you didn't accidentally paste extra data.";
     }
   }
 
