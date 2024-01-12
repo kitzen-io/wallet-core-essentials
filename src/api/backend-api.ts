@@ -47,7 +47,7 @@ export async function getPostAddressDto(data: WalletPrivateData, message: string
 export function getVerifyMessageDto(data: WalletPrivateData, message: string): IUserAuthVerifyMessageRequest {
   const btc = CryptoFactory.getBtc();
 
-  const masterAddress = btc.getBTCAddress(data.publicKeyBase58);
+  const masterAddress = btc.getBTCAddress(data.publicKeyBase58, '0');
   const btcMasterDerivePath = "m/84'/0'/0'/0/0"
 
   return {

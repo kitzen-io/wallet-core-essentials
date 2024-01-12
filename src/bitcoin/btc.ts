@@ -3,10 +3,11 @@ import {
 } from 'bip32';
 import type { Transaction } from 'bitcoinjs-lib';
 import {
+  Network,
   networks,
+  payments,
   Psbt,
 } from 'bitcoinjs-lib';
-import BIP84 from 'bip84'
 import * as bitcoinMessage from 'bitcoinjs-message';
 import {
   ECPairAPI,
@@ -25,7 +26,6 @@ import {
 } from '@kitzen/data-transfer-objects';
 import { validate } from 'bitcoin-address-validation';
 import {ethers} from "ethers";
-import b58 from 'bs58check'
 
 export class Btc   {
   public constructor(
@@ -40,9 +40,7 @@ export class Btc   {
 
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
-    const xpub = wallet.derivePath("m/84'/0'/0'/0").neutered().toBase58();
-
-    const publicKeyBase58 = this.convertXpub(xpub);
+    const publicKeyBase58 = wallet.derivePath("m/84'/0'/0'/0").neutered().toBase58();
 
     const bip32TronInterface = wallet.derivePath("m/44'/195'/0'/0/0");
     const privateKeyTronHex = bip32TronInterface.privateKey!.toString('hex');
@@ -64,20 +62,6 @@ export class Btc   {
     }
   }
 
-  private convertXpub(xpub) {
-    xpub = xpub.trim();
-
-    const zpubPrefix = '04b24746'
-    try {
-      var data = b58.decode(xpub);
-      data = data.slice(4);
-      data = Buffer.concat([Buffer.from(zpubPrefix,'hex'), data]);
-      return b58.encode(data);
-    } catch (err) {
-      return "Invalid extended public key! Please double check that you didn't accidentally paste extra data.";
-    }
-  }
-
   public signMessage(message: string, derivePath: string, privateKeyBase58: string): string {
     const wif = this.bip32.fromBase58(privateKeyBase58, networks.bitcoin).derivePath(derivePath).toWIF();
     const keyPair = this.ecPair.fromWIF(wif);
@@ -90,8 +74,10 @@ export class Btc   {
   //   return this.ecPair.fromPublicKey(pubkey).verify(msghash, signature);
   // }
   //
-  public getBTCAddress(pubkey: string, index: number = 0,): string {
-    return new BIP84.fromZPub(pubkey).getAddress(index);
+  public getBTCAddress(pubkey: string, index: string, network?: Network): string {
+    const wallet = this.bip32.fromBase58(pubkey).derivePath(index);
+
+    return payments.p2wpkh({ pubkey: wallet.publicKey, network }).address!;
   }
 
   private getMasterPrivateKeyBase58FromSecret(secret: string): string {
