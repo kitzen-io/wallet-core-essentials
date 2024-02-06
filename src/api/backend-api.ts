@@ -15,6 +15,7 @@ export async function getPostAddressDto(data: WalletPrivateData, message: string
   const result: IUserAddressRequest = {
     addresses: [],
     pubkey: data.publicKeyBase58,
+    changePubkey: data.changePublicKeyBase58,
   };
 
   const tronAddress = trx.getAddressFromPrivateKey(data.privateKeyTronHex);
@@ -55,6 +56,8 @@ export function getVerifyMessageDto(data: WalletPrivateData, message: string): I
     address: masterAddress,
     path: btcMasterDerivePath,
     signature: CryptoFactory.getBtc().signMessage(message, btcMasterDerivePath, data.privateKeyBase58),
+    timezone: '',
+    device: ''
   };
 }
 

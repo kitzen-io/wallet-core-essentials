@@ -765,10 +765,10 @@
   resolved "https://registry.yarnpkg.com/@kitzen/assets/-/assets-1.0.21.tgz#633564acb6aad5dbf1c003da1aa50598e53ae0e0"
   integrity sha512-uH7uyvei9WPLYq+78cu0DpvBE2GGsy+Q51CstycfPoiKEJnDwgKoo9yIVioPJ4zeUnfcmR/Jv8SJ1L9T/8iwIw==
 
-"@kitzen/data-transfer-objects@^1.0.95":
-  version "1.0.95"
-  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.95.tgz#5e0a29c6f127e07682563207d9340dcdc50785e5"
-  integrity sha512-7sFMOvP/DhNdBdzDrkKVf53ge//Fue+tvpCwzXeUVUj/pnyWRJeZUVk/q/zyQyfHdYESnXGpan9+tz/ShPa9ug==
+"@kitzen/data-transfer-objects@^1.0.109":
+  version "1.0.109"
+  resolved "https://registry.yarnpkg.com/@kitzen/data-transfer-objects/-/data-transfer-objects-1.0.109.tgz#d5d737d3035517263fef68473b6b572556f18687"
+  integrity sha512-hwqZUSTILiH1/IroHGQPKgdEkKfpFpP+mL4ZnplvlRioGkqtBPxtMdoc3krrXfXuq18ecNm0Lpd7LrU0R60EoA==
 
 "@kitzen/escrow-contract@^1.1.2":
   version "1.1.2"
