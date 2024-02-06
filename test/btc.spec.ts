@@ -54,7 +54,7 @@ describe('btc', () => {
 
   test('validatePrivateKey', () => {
     let btc = CryptoFactory.getBtc();
-    let result = btc.validatePrvPubKey(privateKeyBase58)
+    let result = btc.validatePrvPubKey('xpub6E2H3fptTWST9ayPAmAfZUwPtsNFq99f6Ls5xJ5EVoNmLkvAEDPdomwkV2eSsaazwzfbkonWyASwRsHpte1oYCXGzzNZymToqQrsKR3Qdpv')
     expect(result).toBe(true);
   });
 });

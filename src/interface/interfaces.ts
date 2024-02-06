@@ -20,6 +20,7 @@ export interface Address {
 
 export interface WalletPrivateData {
   publicKeyBase58: string;
+  changePublicKeyBase58: string;
   privateKeyBase58: string;
   privateKeyTronHex: string;
   privateKeyEthBase58: string;
