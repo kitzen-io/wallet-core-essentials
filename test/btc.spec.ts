@@ -43,6 +43,7 @@ describe('btc', () => {
   test('getWalletPrivateData with mnemonic', () => {
     let btc = CryptoFactory.getBtc();
     let result = btc.getWalletPrivateData('horn always soldier snake basic must mosquito entry tuition protect sustain mango')
+
     expect(result).toStrictEqual(walletPrivateData);
   });
 
