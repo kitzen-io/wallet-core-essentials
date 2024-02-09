@@ -41,7 +41,7 @@ export class Btc   {
     const wallet = this.bip32.fromBase58(privateKeyBase58)!;
 
     const publicKeyBase58 = wallet.derivePath("m/84'/0'/0'/0").neutered().toBase58();
-    const changePublicKeyBase58 = wallet.derivePath("m/84'/0'/1'/0").neutered().toBase58();
+    const changePublicKeyBase58 = wallet.derivePath("m/84'/0'/0'/1").neutered().toBase58();
 
     const bip32TronInterface = wallet.derivePath("m/44'/195'/0'/0/0");
     const privateKeyTronHex = bip32TronInterface.privateKey!.toString('hex');
