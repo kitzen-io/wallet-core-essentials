@@ -39,7 +39,7 @@
   "dependencies": {
     "@kitzen/data-transfer-objects": "^1.0.109",
     "@kitzen/escrow-contract": "^1.1.2",
-    "@noble/secp256k1": "1.6.3",
+    "@noble/secp256k1": "1.7.2",
     "@tronscan/client": "^0.2.81",
     "bignumber.js": "^9.1.1",
     "bip32": "3.0.1",
