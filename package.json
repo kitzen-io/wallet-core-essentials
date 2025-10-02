@@ -50,7 +50,7 @@
     "ecpair": "2.0.1",
     "ethers": "6.7.0",
     "events": "3.3.0",
-    "patch-package": "^7.0.2",
+    "patch-package": "^8.0.1",
     "stream-browserify": "^3.0.0"
   },
   "peerDependencies": {
